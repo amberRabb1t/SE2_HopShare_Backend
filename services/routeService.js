@@ -67,13 +67,15 @@ export async function get(id) {
  */
 export async function update(id, payload) {
   const { useMockData } = dbState();
+  const safe = { ...payload };
+  delete safe.userID; // do not allow changing owner
   if (useMockData) {
     const idx = routes.findIndex(r => r.RouteID === Number(id));
     if (idx === -1) return null;
-    routes[idx] = { ...routes[idx], ...payload };
+    routes[idx] = { ...routes[idx], ...safe };
     return routes[idx];
   }
-  return Route.findOneAndUpdate({ RouteID: id }, payload, { new: true });
+  return Route.findOneAndUpdate({ RouteID: id }, safe, { new: true });
 }
 
 /**

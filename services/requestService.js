@@ -50,13 +50,15 @@ export async function get(id) {
 
 export async function update(id, payload) {
   const { useMockData } = dbState();
+  const safe = { ...payload };
+  delete safe.userID;
   if (useMockData) {
     const idx = requests.findIndex(r => r.RequestID === Number(id));
     if (idx === -1) return null;
-    requests[idx] = { ...requests[idx], ...payload };
+    requests[idx] = { ...requests[idx], ...safe };
     return requests[idx];
   }
-  return Request.findOneAndUpdate({ RequestID: id }, payload, { new: true });
+  return Request.findOneAndUpdate({ RequestID: id }, safe, { new: true });
 }
 
 export async function remove(id) {

@@ -19,7 +19,12 @@ export async function listRequests(req, res, next) {
  */
 export async function createRequest(req, res, next) {
   try {
-    const created = await reqs.create(req.body);
+    const creatorId = req.user?.UserID;
+    const payload = { ...req.body };
+    if (creatorId) {
+      payload.userID = Number(creatorId);
+    }
+    const created = await reqs.create(payload);
     return sendSuccess(res, created, 'Successfully created request', 201);
   } catch (err) {
     return next(err);
