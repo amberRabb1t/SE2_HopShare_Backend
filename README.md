@@ -2,7 +2,7 @@
 
 Intuitive, easy-to-use application that facilitates carpooling in an organized manner.
 
-- Primary contract: OpenAPI Spec (see swagger.json you provided)
+- Primary contract: OpenAPI Spec (see swagger.json)
 - Context: User Stories (stories.json)
 - Business Rules: Requirements (requirements.json)
 
