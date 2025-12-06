@@ -1,0 +1,42 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage to Actions (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
+
+      - name: Trigger Render deploy (only if tests passed)
+        if: always() && success()
+        env:
+          RENDER_HOOK: ${{ secrets.BACKEND_RENDER_HOOK }}
+        run: |
+          if [ -z "$RENDER_HOOK" ]; then
+            echo "No Render hook defined. Skipping deploy."
+            exit 0
+          fi
+          curl -X POST "$RENDER_HOOK"
