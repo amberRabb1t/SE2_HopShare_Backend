@@ -65,8 +65,9 @@ export async function deleteRoute(req, res, next) {
   try {
     const ok = await routes.remove(Number(req.params.routeID));
     if (!ok) throw new AppError('Route not found', 404, ERROR_CODES.NOT_FOUND);
-    return sendSuccess(res, null, 'Successfully deleted route', 200);
+    return sendSuccess(res, null, 'Successfully deleted route', 204);
   } catch (err) {
     return next(err);
   }
 }
+

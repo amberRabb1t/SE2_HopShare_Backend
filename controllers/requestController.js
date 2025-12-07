@@ -64,8 +64,9 @@ export async function deleteRequest(req, res, next) {
   try {
     const ok = await reqs.remove(Number(req.params.requestID));
     if (!ok) throw new AppError('Request not found', 404, ERROR_CODES.NOT_FOUND);
-    return sendSuccess(res, null, 'Successfully deleted request', 200);
+    return sendSuccess(res, null, 'Successfully deleted request', 204);
   } catch (err) {
     return next(err);
   }
 }
+

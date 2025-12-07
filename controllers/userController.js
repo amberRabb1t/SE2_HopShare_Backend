@@ -61,8 +61,9 @@ export async function deleteUser(req, res, next) {
   try {
     const ok = await users.remove(Number(req.params.userID));
     if (!ok) throw new AppError('User not found', 404, ERROR_CODES.NOT_FOUND);
-    return sendSuccess(res, null, 'Successfully deleted user', 200);
+    return sendSuccess(res, null, 'Successfully deleted user', 204);
   } catch (err) {
     return next(err);
   }
 }
+

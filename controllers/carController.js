@@ -20,7 +20,7 @@ export async function listCars(req, res, next) {
 export async function createCar(req, res, next) {
   try {
     const created = await cars.create(Number(req.params.userID), req.body);
-    return sendSuccess(res, created, 'Car added successfully', 200);
+    return sendSuccess(res, created, 'Car added successfully', 201);
   } catch (err) {
     return next(err);
   }
@@ -64,3 +64,4 @@ export async function deleteCar(req, res, next) {
     return next(err);
   }
 }
+

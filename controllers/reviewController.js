@@ -21,7 +21,7 @@ export async function listUserReviews(req, res, next) {
 export async function createReview(req, res, next) {
   try {
     const created = await reviews.create(Number(req.params.userID), req.body);
-    return sendSuccess(res, created, 'Review added successfully', 200);
+    return sendSuccess(res, created, 'Review added successfully', 201);
   } catch (err) {
     return next(err);
   }
@@ -65,3 +65,4 @@ export async function deleteReview(req, res, next) {
     return next(err);
   }
 }
+
