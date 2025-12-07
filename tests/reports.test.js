@@ -7,7 +7,6 @@ let client;
 let authClient;
 
 const auth = { email: 'alice@example.com', password: 'password123' };
-const aliceId = 1; // seeded in mock service
 
 test.before(async () => {
   serverCtx = await startTestServer();
@@ -64,7 +63,7 @@ test.serial('Get report by ID (GET /reports/:reportID)', async (t) => {
 });
 
 test.serial('Get non-existent report (GET /reports/:reportID)', async (t) => {
-  const res = await client.get(`reports/676767`);
+  const res = await client.get('reports/676767');
   t.is(res.statusCode, 404);
   t.is(res.body.success, false);
   t.truthy(res.body.message);

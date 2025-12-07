@@ -52,7 +52,7 @@ test.serial('Get request by ID (GET /requests/:requestID)', async (t) => {
   t.is(res.body.data.RequestID, createdRequestId);
 });
 test.serial('Get non-existent request (GET /requests/:requestID)', async (t) => {
-  const res = await client.get(`requests/676767`);
+  const res = await client.get('requests/676767');
   t.is(res.statusCode, 404);
   t.is(res.body.success, false);
   t.truthy(res.body.message);
@@ -130,7 +130,7 @@ test.serial('Create request (POST /requests) with invalid body', async (t) => {
 });
 
 test.serial('Update non-existent request (PUT /requests/:requestID)', async (t) => {
-  const res = await authClient.put(`requests/676767`, {
+  const res = await authClient.put('requests/676767', {
     json: {
       Start: 'City A',
       End: 'City C',
@@ -145,7 +145,7 @@ test.serial('Update non-existent request (PUT /requests/:requestID)', async (t) 
 });
 
 test.serial('Delete non-existent request (DELETE /requests/:requestID)', async (t) => {
-  const res = await authClient.delete(`requests/676767`);
+  const res = await authClient.delete('requests/676767');
   t.is(res.statusCode, 404);
   t.is(res.body.success, false);
   t.truthy(res.body.message);

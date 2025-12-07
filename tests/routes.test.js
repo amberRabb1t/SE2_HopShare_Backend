@@ -56,7 +56,7 @@ test.serial('Get route by ID (GET /routes/:routeID)', async (t) => {
 });
 
 test.serial('Get non-existent route (GET /routes/:routeID)', async (t) => {
-  const res = await client.get(`routes/676767`);
+  const res = await client.get('routes/676767');
   t.is(res.statusCode, 404);
   t.is(res.body.success, false);
 	t.truthy(res.body.message);
@@ -157,7 +157,7 @@ test.serial('Create route (POST /routes) with invalid credentials', async (t) =>
 });
 
 test.serial('Update non-existent route (PUT /routes/:routeID)', async (t) => {
-  const res = await authClient.put(`routes/676767`, {
+  const res = await authClient.put('routes/676767', {
     json: {
       Start: 'City X',
       End: 'City Y',
@@ -174,7 +174,7 @@ test.serial('Update non-existent route (PUT /routes/:routeID)', async (t) => {
 });
 
 test.serial('Delete non-existent route (DELETE /routes/:routeID)', async (t) => {
-  const res = await authClient.delete(`routes/676767`);
+  const res = await authClient.delete('routes/676767');
   t.is(res.statusCode, 404);
   t.is(res.body.success, false);
 	t.truthy(res.body.message);

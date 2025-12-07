@@ -36,7 +36,7 @@ test.serial('Get user by ID (GET /users/:userID)', async (t) => {
 });
 
 test.serial('Get non-existent user (GET /users/:userID)', async (t) => {
-  const res = await client.get(`users/676767`);
+  const res = await client.get('users/676767');
   t.is(res.statusCode, 404);
   t.is(res.body.success, false);
   t.truthy(res.body.message);
@@ -105,9 +105,9 @@ test.serial('Update user (PUT /users/:userID) with invalid credentials', async (
 
 test.serial('Delete user (DELETE /users/:userID) with invalid credentials', async (t) => {
   const res = await client.delete(`users/${createdUserId}`);
-	t.is(res.statusCode, 401);
+  t.is(res.statusCode, 401);
   t.is(res.body.success, false);
-	t.truthy(res.body.message);
+  t.truthy(res.body.message);
 });
 
 test.serial('Delete user (DELETE /users/:userID)', async (t) => {
@@ -132,7 +132,7 @@ test.serial('Create user (POST /users) with invalid body', async (t) => {
 });
 
 test.serial('Update non-existent user (PUT /users/:userID)', async (t) => {
-  const res = await authClient.put(`users/676767`, {
+  const res = await authClient.put('users/676767', {
     json: {
       Name: 'Alice',
       PhoneNumber: 7676767676,
@@ -147,7 +147,7 @@ test.serial('Update non-existent user (PUT /users/:userID)', async (t) => {
 });
 
 test.serial('Delete non-existent user (DELETE /users/:userID)', async (t) => {
-  const res = await authClient.delete(`users/676767`);
+  const res = await authClient.delete('users/676767');
   t.is(res.statusCode, 404);
   t.is(res.body.success, false);
   t.truthy(res.body.message);
