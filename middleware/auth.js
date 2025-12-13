@@ -40,7 +40,6 @@ async function authenticate(username, password) {
 /**
  * Enforce Basic auth for mutating endpoints or when explicitly used.
  * - If BASIC_AUTH_ENABLED=false, it becomes a no-op and always allows.
- * - If method is GET, it allows without auth to support public reads.
  * @returns {import('express').RequestHandler}
  */
 export function authRequired() {
@@ -48,13 +47,14 @@ export function authRequired() {
   return async (req, _res, next) => {
     try {
       if (!enabled) return next();
-      if (req.method === 'GET') return next();
 
       const creds = parseBasicAuth(req);
       if (!creds) throw new AppError('Missing Basic Authorization header', 401, ERROR_CODES.UNAUTHORIZED);
 
       const user = await authenticate(creds.username, creds.password);
       req.user = user;
+      req.IDtoSet = user.UserID;
+
       next();
     } catch (err) {
       next(err);
@@ -83,3 +83,4 @@ export function authOptional() {
     }
   };
 }
+

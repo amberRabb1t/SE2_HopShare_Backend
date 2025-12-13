@@ -5,13 +5,20 @@ import { makeClient } from './helpers/http.js';
 let serverCtx;
 let client;
 let authClient;
+let adminClient;
 
-const auth = { email: 'alice@example.com', password: 'password123' };
+const bobAuth = { email: 'bob@example.com', password: 'password123' };
+const aliceAuth = { email: 'alice@example.com', password: 'password123' };
+
+// seeded in mock service
+const aliceRouteId = 1;
+const bobRouteId = 2;
 
 test.before(async () => {
   serverCtx = await startTestServer();
   client = makeClient(serverCtx.url);
-  authClient = makeClient(serverCtx.url, auth);
+  authClient = makeClient(serverCtx.url, bobAuth);
+  adminClient = makeClient(serverCtx.url, aliceAuth);
 });
 
 test.after.always(async () => {
@@ -112,9 +119,32 @@ test.serial('Update route (PUT /routes/:routeID) with invalid credentials', asyn
 	t.truthy(res.body.message);
 });
 
+test.serial('Update route (PUT /routes/:routeID) with invalid authorization', async (t) => {
+  const res = await authClient.put(`routes/${aliceRouteId}`, {
+    json: {
+      Start: 'City X',
+      End: 'City Y',
+      Stops: 'Midpoint',
+      DateAndTime: Math.floor(Date.now() / 1000) + 172800,
+      OccupiedSeats: 2,
+      Comment: 'Updated with invalid authorization'
+    }
+  });
+  t.is(res.statusCode, 403);
+  t.is(res.body.success, false);
+	t.truthy(res.body.message);
+});
+
 test.serial('Delete route (DELETE /routes/:routeID) with invalid credentials', async (t) => {
   const res = await client.delete(`routes/${createdRouteId}`);
   t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+	t.truthy(res.body.message);
+});
+
+test.serial('Delete route (DELETE /routes/:routeID) with invalid authorization', async (t) => {
+  const res = await authClient.delete(`routes/${aliceRouteId}`);
+  t.is(res.statusCode, 403);
   t.is(res.body.success, false);
 	t.truthy(res.body.message);
 });
@@ -179,5 +209,31 @@ test.serial('Delete non-existent route (DELETE /routes/:routeID)', async (t) => 
   t.is(res.body.success, false);
 	t.truthy(res.body.message);
   t.is(res.body.error, 'NOT_FOUND');
+});
+
+// Admin overrides
+
+test.serial('Update route (PUT /routes/:routeID) via admin override', async (t) => {
+  const res = await adminClient.put(`routes/${bobRouteId}`, {
+    json: {
+      Start: 'City J',
+      End: 'City Z',
+      Stops: 'Lolpoint',
+      DateAndTime: Math.floor(Date.now() / 1000) + 172800,
+      OccupiedSeats: 2,
+      Comment: 'Updated'
+    }
+  });
+  t.is(res.statusCode, 200);
+  t.is(res.body.success, true);
+	t.truthy(res.body.message);
+  t.is(res.body.data.OccupiedSeats, 2);
+});
+
+test.serial('Delete route (DELETE /routes/:routeID) via admin override', async (t) => {
+  const res = await adminClient.delete(`routes/${bobRouteId}`);
+  t.is(res.statusCode, 204);
+  t.falsy(res.body);
+	t.truthy(res.statusMessage);
 });
 

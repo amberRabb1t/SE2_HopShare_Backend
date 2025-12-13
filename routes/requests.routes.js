@@ -9,7 +9,12 @@ import * as reqsService from '../services/requestService.js';
 const router = Router();
 
 router.get('/', validate({ query: requestQuerySchema }), controller.listRequests);
-router.post('/', authRequired(), validate({ body: requestBodySchema }), controller.createRequest);
+
+router.post('/', 
+  authRequired(), 
+  validate({ body: requestBodySchema }), 
+  controller.createRequest
+);
 
 router.get('/:requestID', controller.getRequest);
 
@@ -29,3 +34,4 @@ router.delete(
 );
 
 export default router;
+

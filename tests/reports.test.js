@@ -5,13 +5,16 @@ import { makeClient } from './helpers/http.js';
 let serverCtx;
 let client;
 let authClient;
+let adminClient;
 
-const auth = { email: 'alice@example.com', password: 'password123' };
+const bobAuth = { email: 'bob@example.com', password: 'password123' };
+const aliceAuth = { email: 'alice@example.com', password: 'password123' };
 
 test.before(async () => {
   serverCtx = await startTestServer();
   client = makeClient(serverCtx.url);
-  authClient = makeClient(serverCtx.url, auth);
+  authClient = makeClient(serverCtx.url, bobAuth);
+  adminClient = makeClient(serverCtx.url, aliceAuth);
 });
 
 test.after.always(async () => {
@@ -47,7 +50,7 @@ test.serial('Create report (POST /reports) with invalid credentials', async (t) 
 });
 
 test.serial('List reports (GET /reports?UserID=2)', async (t) => {
-  const res = await client.get('reports', { searchParams: { UserID: 2 } });
+  const res = await adminClient.get('reports', { searchParams: { UserID: 2 } });
   t.is(res.statusCode, 200);
   t.is(res.body.success, true);
   t.truthy(res.body.message);
@@ -55,7 +58,7 @@ test.serial('List reports (GET /reports?UserID=2)', async (t) => {
 });
 
 test.serial('Get report by ID (GET /reports/:reportID)', async (t) => {
-  const res = await client.get(`reports/${createdReportId}`);
+  const res = await adminClient.get(`reports/${createdReportId}`);
   t.is(res.statusCode, 200);
   t.is(res.body.success, true);
   t.truthy(res.body.message);
@@ -63,7 +66,7 @@ test.serial('Get report by ID (GET /reports/:reportID)', async (t) => {
 });
 
 test.serial('Get non-existent report (GET /reports/:reportID)', async (t) => {
-  const res = await client.get('reports/676767');
+  const res = await adminClient.get('reports/676767');
   t.is(res.statusCode, 404);
   t.is(res.body.success, false);
   t.truthy(res.body.message);
@@ -82,6 +85,34 @@ test.serial('Get non-existent report (GET /reports/:reportID)', async (t) => {
 //   t.truthy(res.body.message);
 //   t.is(res.body.error, 'NOT_FOUND');
 // });
+
+test.serial('List reports (GET /reports?UserID=2) with invalid credentials', async (t) => {
+  const res = await client.get('reports', { searchParams: { UserID: 2 } });
+  t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('List reports (GET /reports?UserID=2) with invalid authorization', async (t) => {
+  const res = await authClient.get('reports', { searchParams: { UserID: 2 } });
+  t.is(res.statusCode, 403);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Get report by ID (GET /reports/:reportID) with invalid credentials', async (t) => {
+  const res = await client.get(`reports/${createdReportId}`);
+  t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Get report by ID (GET /reports/:reportID) with invalid authorization', async (t) => {
+  const res = await authClient.get(`reports/${createdReportId}`);
+  t.is(res.statusCode, 403);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
 
 test.serial('Non-existent route returns 404', async (t) => {
   const res = await client.get('this-route-does-not-exist');

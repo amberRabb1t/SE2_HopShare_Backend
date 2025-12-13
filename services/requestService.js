@@ -3,8 +3,8 @@ import { Request } from '../models/Request.js';
 import { getNextId } from '../utils/helpers.js';
 
 const requests = [
-  { RequestID: 1, Description: 'Morning commute', Status: false, Start: 'City A', End: 'City D', DateAndTime: 1731600000, Timestamp: 1731400300, userID: 2 },
-  { RequestID: 2, Description: 'Airport drop', Status: false, Start: 'City C', End: 'Airport', DateAndTime: 1731650000, Timestamp: 1731400400, userID: 3 }
+  { RequestID: 1, Description: 'Morning commute', Status: false, Start: 'City A', End: 'City D', DateAndTime: 1731600000, Timestamp: 1731400300, UserID: 2 },
+  { RequestID: 2, Description: 'Airport drop', Status: false, Start: 'City C', End: 'Airport', DateAndTime: 1731650000, Timestamp: 1731400400, UserID: 3 }
 ];
 
 export async function list(filters = {}) {
@@ -14,14 +14,14 @@ export async function list(filters = {}) {
     if (filters.Start) result = result.filter(r => r.Start.toLowerCase().includes(filters.Start.toLowerCase()));
     if (filters.End) result = result.filter(r => r.End.toLowerCase().includes(filters.End.toLowerCase()));
     if (filters.DateAndTime) result = result.filter(r => r.DateAndTime === Number(filters.DateAndTime));
-    if (filters.userID) result = result.filter(r => r.userID === Number(filters.userID));
+    if (filters.userID) result = result.filter(r => r.UserID === Number(filters.userID));
     return result;
   }
   const q = {};
   if (filters.Start) q.Start = new RegExp(filters.Start, 'i');
   if (filters.End) q.End = new RegExp(filters.End, 'i');
   if (filters.DateAndTime) q.DateAndTime = Number(filters.DateAndTime);
-  if (filters.userID) q.userID = Number(filters.userID);
+  if (filters.userID) q.UserID = Number(filters.userID);
   return Request.find(q);
 }
 
@@ -50,8 +50,12 @@ export async function get(id) {
 
 export async function update(id, payload) {
   const { useMockData } = dbState();
+
   const safe = { ...payload };
-  delete safe.userID;
+  delete safe.RequestID;
+  delete safe.UserID;
+  delete safe.Timestamp;
+
   if (useMockData) {
     const idx = requests.findIndex(r => r.RequestID === Number(id));
     if (idx === -1) return null;
@@ -72,3 +76,4 @@ export async function remove(id) {
   const res = await Request.deleteOne({ RequestID: id });
   return res.deletedCount > 0;
 }
+

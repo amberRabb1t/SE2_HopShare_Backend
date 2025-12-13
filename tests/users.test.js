@@ -5,14 +5,17 @@ import { makeClient } from './helpers/http.js';
 let serverCtx;
 let client;
 let authClient;
+let adminClient;
 
-const auth = { email: 'alice@example.com', password: 'password123' };
-const aliceId = 1; // seeded in mock service
+const bobAuth = { email: 'bob@example.com', password: 'password123' };
+const aliceAuth = { email: 'alice@example.com', password: 'password123' };
+const bobId = 2; // seeded in mock service
 
 test.before(async () => {
   serverCtx = await startTestServer();
   client = makeClient(serverCtx.url);
-  authClient = makeClient(serverCtx.url, auth);
+  authClient = makeClient(serverCtx.url, bobAuth);
+  adminClient = makeClient(serverCtx.url, aliceAuth);
 });
 
 test.after.always(async () => {
@@ -28,11 +31,11 @@ test.serial('List users (GET /users)', async (t) => {
 });
 
 test.serial('Get user by ID (GET /users/:userID)', async (t) => {
-  const res = await client.get(`users/${aliceId}`);
+  const res = await client.get(`users/${bobId}`);
   t.is(res.statusCode, 200);
   t.is(res.body.success, true);
   t.truthy(res.body.message);
-  t.is(res.body.data.UserID, aliceId);
+  t.is(res.body.data.UserID, bobId);
 });
 
 test.serial('Get non-existent user (GET /users/:userID)', async (t) => {
@@ -62,11 +65,11 @@ test.serial('Create user (POST /users)', async (t) => {
 });
 
 test.serial('Update user (PUT /users/:userID)', async (t) => {
-  const res = await authClient.put(`users/${aliceId}`, {
+  const res = await authClient.put(`users/${bobId}`, {
     json: {
-      Name: 'Alice',
+      Name: 'Bob',
       PhoneNumber: 6767676767,
-      Email: 'alice@example.com',
+      Email: 'bob@example.com',
       Password: 'password123'
     }
   });
@@ -76,11 +79,11 @@ test.serial('Update user (PUT /users/:userID)', async (t) => {
 });
 
 test.serial('Update user (PUT /users/:userID) with invalid body', async (t) => {
-  const res = await authClient.put(`users/${aliceId}`, {
+  const res = await authClient.put(`users/${bobId}`, {
     json: {
       // Missing Name
       PhoneNumber: 7676767676,
-      Email: 'alice@example.com',
+      Email: 'bob@example.com',
       Password: 'password123'
     }
   });
@@ -89,16 +92,44 @@ test.serial('Update user (PUT /users/:userID) with invalid body', async (t) => {
   t.truthy(res.body.message);
 });
 
-test.serial('Update user (PUT /users/:userID) with invalid credentials', async (t) => {
-  const res = await client.put(`users/${aliceId}`, {
+test.serial('Update user (PUT /users/:userID) with password that is too short', async (t) => {
+  const res = await authClient.put(`users/${bobId}`, {
     json: {
-      Name: 'Alice',
+      Name: 'BadPasswordGuy',
       PhoneNumber: 7676767676,
-      Email: 'alice@example.com',
+      Email: 'shouldbettermypasswords@example.com',
+      Password: 'short'
+    }
+  });
+  t.is(res.statusCode, 400);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Update user (PUT /users/:userID) with invalid credentials', async (t) => {
+  const res = await client.put(`users/${bobId}`, {
+    json: {
+      Name: 'Bob',
+      PhoneNumber: 7676767676,
+      Email: 'bob@example.com',
       Password: 'password123'
     }
   });
   t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Update user (PUT /users/:userID) with invalid authorization', async (t) => {
+  const res = await authClient.put(`users/${createdUserId}`, {
+    json: {
+      Name: 'Bob',
+      PhoneNumber: 7676767676,
+      Email: 'bob@example.com',
+      Password: 'password123'
+    }
+  });
+  t.is(res.statusCode, 403);
   t.is(res.body.success, false);
   t.truthy(res.body.message);
 });
@@ -110,11 +141,11 @@ test.serial('Delete user (DELETE /users/:userID) with invalid credentials', asyn
   t.truthy(res.body.message);
 });
 
-test.serial('Delete user (DELETE /users/:userID)', async (t) => {
+test.serial('Delete user (DELETE /users/:userID) with invalid authorization', async (t) => {
   const res = await authClient.delete(`users/${createdUserId}`);
-  t.is(res.statusCode, 204);
-  t.falsy(res.body);
-  t.truthy(res.statusMessage);
+  t.is(res.statusCode, 403);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
 });
 
 test.serial('Create user (POST /users) with invalid body', async (t) => {
@@ -131,12 +162,26 @@ test.serial('Create user (POST /users) with invalid body', async (t) => {
   t.truthy(res.body.message);
 });
 
+test.serial('Create user (POST /users) with password that is too short', async (t) => {
+  const res = await client.post('users', {
+    json: {
+      Name: 'BadPasswordEpidemicVictimNo2000',
+      PhoneNumber: 5550001111,
+      Email: 'ohnoes@example.com',
+      Password: 'those'
+    }
+  });
+  t.is(res.statusCode, 400);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
 test.serial('Update non-existent user (PUT /users/:userID)', async (t) => {
   const res = await authClient.put('users/676767', {
     json: {
-      Name: 'Alice',
+      Name: 'Bob',
       PhoneNumber: 7676767676,
-      Email: 'alice@example.com',
+      Email: 'bob@example.com',
       Password: 'password123'
     }
   });
@@ -152,5 +197,35 @@ test.serial('Delete non-existent user (DELETE /users/:userID)', async (t) => {
   t.is(res.body.success, false);
   t.truthy(res.body.message);
   t.is(res.body.error, 'NOT_FOUND');
+});
+
+test.serial('Delete user (DELETE /users/:userID)', async (t) => {
+  const res = await authClient.delete(`users/${bobId}`);
+  t.is(res.statusCode, 204);
+  t.falsy(res.body);
+  t.truthy(res.statusMessage);
+});
+
+// Admin overrides
+
+test.serial('Update user (PUT /users/:userID) via admin override', async (t) => {
+  const res = await adminClient.put(`users/${createdUserId}`, {
+    json: {
+      Name: 'trole',
+      PhoneNumber: 6767676767,
+      Email: 'trole@example.com',
+      Password: 'trolepass123'
+    }
+  });
+  t.is(res.statusCode, 200);
+  t.is(res.body.success, true);
+  t.truthy(res.body.message);
+});
+
+test.serial('Delete user (DELETE /users/:userID) via admin override', async (t) => {
+  const res = await adminClient.delete(`users/${createdUserId}`);
+  t.is(res.statusCode, 204);
+  t.falsy(res.body);
+  t.truthy(res.statusMessage);
 });
 

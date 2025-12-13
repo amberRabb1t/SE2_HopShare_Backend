@@ -5,13 +5,17 @@ import { makeClient } from './helpers/http.js';
 let serverCtx;
 let client;
 let authClient;
+let adminClient;
 
-const auth = { email: 'alice@example.com', password: 'password123' };
+const bobAuth = { email: 'bob@example.com', password: 'password123' };
+const aliceAuth = { email: 'alice@example.com', password: 'password123' };
+const charlieRequestId = 2; // seeded in mock service
 
 test.before(async () => {
   serverCtx = await startTestServer();
   client = makeClient(serverCtx.url);
-  authClient = makeClient(serverCtx.url, auth);
+  authClient = makeClient(serverCtx.url, bobAuth);
+  adminClient = makeClient(serverCtx.url, aliceAuth);
 });
 
 test.after.always(async () => {
@@ -102,9 +106,30 @@ test.serial('Update request (PUT /requests/:requestID) with invalid credentials'
 	t.truthy(res.body.message);
 });
 
+test.serial('Update request (PUT /requests/:requestID) with invalid authorization', async (t) => {
+  const res = await authClient.put(`requests/${charlieRequestId}`, {
+    json: {
+      Start: 'City A',
+      End: 'City C',
+      DateAndTime: Math.floor(Date.now() / 1000) + 172800,
+      Description: 'Updated route with invalid authorization needed'
+    }
+  });
+	t.is(res.statusCode, 403);
+  t.is(res.body.success, false);
+	t.truthy(res.body.message);
+});
+
 test.serial('Delete request (DELETE /requests/:requestID) with invalid credentials', async (t) => {
   const res = await client.delete(`requests/${createdRequestId}`);
 	t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+	t.truthy(res.body.message);
+});
+
+test.serial('Delete request (DELETE /requests/:requestID) with invalid authorization', async (t) => {
+  const res = await authClient.delete(`requests/${charlieRequestId}`);
+	t.is(res.statusCode, 403);
   t.is(res.body.success, false);
 	t.truthy(res.body.message);
 });
@@ -163,5 +188,29 @@ test.serial('Create request (POST /requests) with invalid credentials', async (t
 	t.is(res.statusCode, 401);
   t.is(res.body.success, false);
 	t.truthy(res.body.message);
+});
+
+// Admin overrides
+
+test.serial('Update request (PUT /requests/:requestID) via admin override', async (t) => {
+  const res = await adminClient.put(`requests/${charlieRequestId}`, {
+    json: {
+      Start: 'City H',
+      End: 'City W',
+      DateAndTime: Math.floor(Date.now() / 1000) + 172800,
+      Description: 'Trolololol'
+    }
+  });
+  t.is(res.statusCode, 200);
+  t.is(res.body.success, true);
+  t.truthy(res.body.message);
+  t.is(res.body.data.End, 'City W');
+});
+
+test.serial('Delete request (DELETE /requests/:requestID) via admin override', async (t) => {
+  const res = await adminClient.delete(`requests/${charlieRequestId}`);
+  t.is(res.statusCode, 204);
+  t.falsy(res.body);
+	t.truthy(res.statusMessage);
 });
 

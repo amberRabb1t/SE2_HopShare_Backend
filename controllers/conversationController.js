@@ -2,6 +2,8 @@ import { sendSuccess } from '../utils/responses.js';
 import { AppError, ERROR_CODES } from '../config/constants.js';
 import * as convos from '../services/conversationService.js';
 
+// Conversations
+
 /**
  * List conversations
  */
@@ -19,7 +21,7 @@ export async function listConversations(req, res, next) {
  */
 export async function createConversation(req, res, next) {
   try {
-    const created = await convos.create(Number(req.params.userID), req.body);
+    const created = await convos.create(Number(req.IDtoSet), req.body);
     return sendSuccess(res, created, 'Conversation created successfully', 201);
   } catch (err) {
     return next(err);
@@ -66,6 +68,8 @@ export async function deleteConversation(req, res, next) {
   }
 }
 
+// Messages
+
 /**
  * List messages
  */
@@ -83,7 +87,9 @@ export async function listMessages(req, res, next) {
  */
 export async function createMessage(req, res, next) {
   try {
-    const created = await convos.createMessage(Number(req.params.userID), Number(req.params.conversationID), req.body);
+    const payload = { ...req.body };
+    payload.adminOrigin = req.adminOrigin || false;
+    const created = await convos.createMessage(Number(req.IDtoSet), Number(req.params.conversationID), payload);
     return sendSuccess(res, created, 'Message created successfully', 201);
   } catch (err) {
     return next(err);

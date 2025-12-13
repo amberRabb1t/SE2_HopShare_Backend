@@ -3,8 +3,8 @@ import { Report } from '../models/Report.js';
 import { getNextId } from '../utils/helpers.js';
 
 const reports = [
-  { ReportID: 1, Description: 'Spam behavior', ReportedUser: 3, State: false, Timestamp: 1731400100 },
-  { ReportID: 2, Description: 'Rude messages', ReportedUser: 2, State: true, Timestamp: 1731400200 }
+  { ReportID: 1, Description: 'Spam behavior', ReportedUser: 3, State: false, Timestamp: 1731400100, UserID: 2 },
+  { ReportID: 2, Description: 'Rude messages', ReportedUser: 2, State: true, Timestamp: 1731400200, UserID: 4 }
 ];
 
 export async function list(filters = {}) {
@@ -47,3 +47,4 @@ export async function get(id) {
   }
   return Report.findOne({ ReportID: id });
 }
+

@@ -19,12 +19,8 @@ export async function listRoutes(req, res, next) {
  */
 export async function createRoute(req, res, next) {
   try {
-    const creatorId = req.user?.UserID;
     const payload = { ...req.body };
-    if (creatorId) {
-      // enforce owner link
-      payload.userID = Number(creatorId);
-    }
+    payload.UserID = Number(req.IDtoSet);
     const created = await routes.create(payload);
     return sendSuccess(res, created, 'Successfully created route', 201);
   } catch (err) {

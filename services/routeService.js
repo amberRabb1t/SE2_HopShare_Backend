@@ -4,8 +4,8 @@ import { getNextId } from '../utils/helpers.js';
 
 // Mock data
 const routes = [
-  { RouteID: 1, Start: 'City A', End: 'City B', Stops: 'Stop1, Stop2', Comment: 'No smoking', DateAndTime: 1731400000, OccupiedSeats: 1, Rules: [true, false, false, false], Timestamp: 1731400000, userID: 1 },
-  { RouteID: 2, Start: 'City B', End: 'City C', Stops: 'Stop3', Comment: 'No pets', DateAndTime: 1731500000, OccupiedSeats: 2, Rules: [false, true, false, true], Timestamp: 1731500000, userID: 2 }
+  { RouteID: 1, Start: 'City A', End: 'City B', Stops: 'Stop1, Stop2', Comment: 'No smoking', DateAndTime: 1731400000, OccupiedSeats: 1, Rules: [true, false, false, false], Timestamp: 1731400000, UserID: 1 },
+  { RouteID: 2, Start: 'City B', End: 'City C', Stops: 'Stop3', Comment: 'No pets', DateAndTime: 1731500000, OccupiedSeats: 2, Rules: [false, true, false, true], Timestamp: 1731500000, UserID: 2 }
 ];
 
 /**
@@ -18,7 +18,7 @@ export async function list(filters = {}) {
     if (filters.Start) result = result.filter(r => r.Start.toLowerCase().includes(filters.Start.toLowerCase()));
     if (filters.End) result = result.filter(r => r.End.toLowerCase().includes(filters.End.toLowerCase()));
     if (filters.DateAndTime) result = result.filter(r => r.DateAndTime === Number(filters.DateAndTime));
-    if (filters.userID) result = result.filter(r => r.userID === Number(filters.userID));
+    if (filters.userID) result = result.filter(r => r.UserID === Number(filters.userID));
     // Boolean flags like NoSmoking/NoPets/NoCats/NoDogs are present in Rules[] for demo only
     return result;
   }
@@ -26,7 +26,7 @@ export async function list(filters = {}) {
   if (filters.Start) mongoQuery.Start = new RegExp(filters.Start, 'i');
   if (filters.End) mongoQuery.End = new RegExp(filters.End, 'i');
   if (filters.DateAndTime) mongoQuery.DateAndTime = Number(filters.DateAndTime);
-  if (filters.userID) mongoQuery.userID = Number(filters.userID);
+  if (filters.userID) mongoQuery.UserID = Number(filters.userID);
   return Route.find(mongoQuery);
 }
 
@@ -67,8 +67,12 @@ export async function get(id) {
  */
 export async function update(id, payload) {
   const { useMockData } = dbState();
+
   const safe = { ...payload };
-  delete safe.userID; // do not allow changing owner
+  delete safe.RouteID;
+  delete safe.UserID;
+  delete safe.Timestamp;
+
   if (useMockData) {
     const idx = routes.findIndex(r => r.RouteID === Number(id));
     if (idx === -1) return null;
@@ -92,3 +96,4 @@ export async function remove(id) {
   const res = await Route.deleteOne({ RouteID: id });
   return res.deletedCount > 0;
 }
+

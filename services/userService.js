@@ -97,16 +97,27 @@ export async function get(id) {
  */
 export async function update(id, payload) {
   const { useMockData } = dbState();
+
+  // A user should not be able to update his own ID, his admin status, his ban status, the timestamp of account creation or his own ratings
+  // Some of these things should be unchangable (e.g. Timestamp, ID) or only by an admin (Banned, IsAdmin, Ratings)
+  const safe = { ...payload };
+  delete safe.UserID;
+  delete safe.Timestamp;
+  delete safe.IsAdmin;
+  delete safe.Banned;
+  delete safe.PassengerRating;
+  delete safe.DriverRating;
+
   if (payload.Password && !payload.Password.startsWith('$2')) {
     payload.Password = await bcrypt.hash(payload.Password, 10);
   }
   if (useMockData) {
     const idx = users.findIndex(u => u.UserID === Number(id));
     if (idx === -1) return null;
-    users[idx] = { ...users[idx], ...payload };
+    users[idx] = { ...users[idx], ...safe };
     return users[idx];
   }
-  return User.findOneAndUpdate({ UserID: id }, payload, { new: true });
+  return User.findOneAndUpdate({ UserID: id }, safe, { new: true });
 }
 
 /**
@@ -129,3 +140,4 @@ export async function remove(id) {
 export function __mock() {
   return users;
 }
+
