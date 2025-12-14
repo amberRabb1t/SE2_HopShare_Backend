@@ -3,16 +3,13 @@ import { dbState } from '../config/database.js';
 import { User } from '../models/User.js';
 import { getNextId } from '../utils/helpers.js';
 
-import dotenv from 'dotenv';
-dotenv.config();
-
 // Mock data
 const users = [
   // Default demo users (passwords in plaintext here; will be hashed once at startup)
-  { UserID: 1, Name: 'Alice', PhoneNumber: 1234567890, PassengerRating: 4.5, DriverRating: 4.8, Banned: false, Email: 'alice@example.com', Password: process.env.DUMMY_PASSWORD, IsAdmin: true, Timestamp: Math.floor(Date.now() / 1000) },
-  { UserID: 2, Name: 'Bob', PhoneNumber: 1231231234, PassengerRating: 3.9, DriverRating: 4.2, Banned: false, Email: 'bob@example.com', Password: process.env.DUMMY_PASSWORD, IsAdmin: false, Timestamp: Math.floor(Date.now() / 1000) },
-  { UserID: 3, Name: 'Charlie', PhoneNumber: 3213214321, PassengerRating: 4.0, DriverRating: 3.8, Banned: false, Email: 'charlie@example.com', Password: process.env.DUMMY_PASSWORD, IsAdmin: false, Timestamp: Math.floor(Date.now() / 1000) },
-  { UserID: 4, Name: 'Charlie', PhoneNumber: 5555555555, PassengerRating: 2.0, DriverRating: 3.1, Banned: false, Email: 'charlie2@example.com', Password: process.env.DUMMY_PASSWORD, IsAdmin: false, Timestamp: Math.floor(Date.now() / 1000) }
+  { UserID: 1, Name: 'Alice', PhoneNumber: 1234567890, PassengerRating: 4.5, DriverRating: 4.8, Banned: false, Email: 'alice@example.com', Password: 'password123', IsAdmin: true, Timestamp: Math.floor(Date.now() / 1000) },
+  { UserID: 2, Name: 'Bob', PhoneNumber: 1231231234, PassengerRating: 3.9, DriverRating: 4.2, Banned: false, Email: 'bob@example.com', Password: 'password123', IsAdmin: false, Timestamp: Math.floor(Date.now() / 1000) },
+  { UserID: 3, Name: 'Charlie', PhoneNumber: 3213214321, PassengerRating: 4.0, DriverRating: 3.8, Banned: false, Email: 'charlie@example.com', Password: 'password123', IsAdmin: false, Timestamp: Math.floor(Date.now() / 1000) },
+  { UserID: 4, Name: 'Charlie', PhoneNumber: 5555555555, PassengerRating: 2.0, DriverRating: 3.1, Banned: false, Email: 'charlie2@example.com', Password: 'password123', IsAdmin: false, Timestamp: Math.floor(Date.now() / 1000) }
 ];
 
 let initialized = false;
@@ -97,16 +94,27 @@ export async function get(id) {
  */
 export async function update(id, payload) {
   const { useMockData } = dbState();
+
+  // A user should not be able to update his own ID, his admin status, his ban status, the timestamp of account creation or his own ratings
+  // Some of these things should be unchangable (e.g. Timestamp, ID) or only by an admin (Banned, IsAdmin, Ratings)
+  const safe = { ...payload };
+  delete safe.UserID;
+  delete safe.Timestamp;
+  delete safe.IsAdmin;
+  delete safe.Banned;
+  delete safe.PassengerRating;
+  delete safe.DriverRating;
+
   if (payload.Password && !payload.Password.startsWith('$2')) {
     payload.Password = await bcrypt.hash(payload.Password, 10);
   }
   if (useMockData) {
     const idx = users.findIndex(u => u.UserID === Number(id));
     if (idx === -1) return null;
-    users[idx] = { ...users[idx], ...payload };
+    users[idx] = { ...users[idx], ...safe };
     return users[idx];
   }
-  return User.findOneAndUpdate({ UserID: id }, payload, { new: true });
+  return User.findOneAndUpdate({ UserID: id }, safe, { new: true });
 }
 
 /**
@@ -129,3 +137,4 @@ export async function remove(id) {
 export function __mock() {
   return users;
 }
+

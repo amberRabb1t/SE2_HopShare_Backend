@@ -7,7 +7,9 @@ import * as reports from '../services/reportService.js';
  */
 export async function createReport(req, res, next) {
   try {
-    const created = await reports.create(req.body);
+    const payload = { ...req.body };
+    payload.UserID = Number(req.IDtoSet);
+    const created = await reports.create(payload);
     return sendSuccess(res, created, 'Successfully filed report', 201);
   } catch (err) {
     return next(err);
@@ -39,3 +41,4 @@ export async function getReport(req, res, next) {
     return next(err);
   }
 }
+

@@ -9,11 +9,15 @@ import * as routesService from '../services/routeService.js';
 const router = Router();
 
 router.get('/', validate({ query: routeQuerySchema }), controller.listRoutes);
-router.post('/', authRequired(), validate({ body: routeBodySchema }), controller.createRoute);
+
+router.post('/', 
+  authRequired(), 
+  validate({ body: routeBodySchema }), 
+  controller.createRoute
+);
 
 router.get('/:routeID', controller.getRoute);
 
-// Require owner-or-admin for updates/deletes
 router.put(
   '/:routeID',
   authRequired(),
@@ -30,3 +34,4 @@ router.delete(
 );
 
 export default router;
+

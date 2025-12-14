@@ -1,1 +1,2091 @@
-"{\n  \"openapi\": \"3.0.0\",\n  \"info\": {\n    \"title\": \"HopShare API\",\n    \"version\": \"1.0.0\",\n    \"description\": \"HopShare's application API\"\n  },\n  \"paths\": {\n    \"/routes\": {\n      \"get\": {\n        \"summary\": \"Retrieve a list of public routes\",\n        \"parameters\": [\n          {\n            \"name\": \"Start\",\n            \"in\": \"query\",\n            \"description\": \"Route's starting point\",\n            \"schema\": {\n              \"type\": \"string\"\n            }\n          },\n          {\n            \"name\": \"End\",\n            \"in\": \"query\",\n            \"description\": \"Route's end point\",\n            \"schema\": {\n              \"type\": \"string\"\n            }\n          },\n          {\n            \"name\": \"NoSmoking\",\n            \"in\": \"query\",\n            \"description\": \"Smoking is not allowed\",\n            \"schema\": {\n              \"type\": \"boolean\"\n            }\n          },\n          {\n            \"name\": \"NoPets\",\n            \"in\": \"query\",\n            \"description\": \"Pets are not allowed\",\n            \"schema\": {\n              \"type\": \"boolean\"\n            }\n          },\n          {\n            \"name\": \"NoCats\",\n            \"in\": \"query\",\n            \"description\": \"Cats are not allowed\",\n            \"schema\": {\n              \"type\": \"boolean\"\n            }\n          },\n          {\n            \"name\": \"NoDogs\",\n            \"in\": \"query\",\n            \"description\": \"Dogs are not allowed\",\n            \"schema\": {\n              \"type\": \"boolean\"\n            }\n          },\n          {\n            \"name\": \"DateAndTime\",\n            \"in\": \"query\",\n            \"description\": \"Date and time that the route is to be driven at (UNIX timestamp)\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          },\n          {\n            \"name\": \"userID\",\n            \"in\": \"query\",\n            \"description\": \"ID of the user whose routes are to be retrieved\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Public routes retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/Route\"\n                  }\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid query parameters\"\n          },\n          \"404\": {\n            \"description\": \"No routes found for the specified criteria\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"post\": {\n        \"summary\": \"Creation of new route\",\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Route\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Successfully created route\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Route\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody or validation error\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/routes/{routeID}\": {\n      \"get\": {\n        \"summary\": \"Retrieve a specific route by ID\",\n        \"parameters\": [\n          {\n            \"name\": \"routeID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"description\": \"Route ID\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Successfully retrieved route\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Route\"\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"Route not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"delete\": {\n        \"summary\": \"Delete a specific route by ID\",\n        \"parameters\": [\n          {\n            \"name\": \"routeID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"description\": \"Route ID\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Successfully deleted route\"\n          },\n          \"404\": {\n            \"description\": \"Route not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"put\": {\n        \"summary\": \"Update a specific route by ID\",\n        \"parameters\": [\n          {\n            \"name\": \"routeID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"description\": \"Route ID\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Route\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Successfully updated route\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Route\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody or validation error\"\n          },\n          \"404\": {\n            \"description\": \"Route not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/reports\": {\n      \"post\": {\n        \"summary\": \"File a report against a user\",\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Report\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Successfully filed report\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Report\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody or validation error\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"get\": {\n        \"summary\": \"Retrieve a list of reports\",\n        \"parameters\": [\n          {\n            \"name\": \"UserID\",\n            \"in\": \"query\",\n            \"description\": \"User ID of reported user\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          },\n          {\n            \"name\": \"ReportID\",\n            \"in\": \"query\",\n            \"description\": \"Report ID\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          },\n          {\n            \"name\": \"State\",\n            \"in\": \"query\",\n            \"description\": \"Report state (pending or reviewed)\",\n            \"schema\": {\n              \"type\": \"boolean\"\n            }\n          },\n          {\n            \"name\": \"Timestamp\",\n            \"in\": \"query\",\n            \"description\": \"Report UNIX timestamp (date and time of creation)\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Reports retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/Report\"\n                  }\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid query parameters\"\n          },\n          \"404\": {\n            \"description\": \"No reports found for the specified criteria\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/reports/{reportID}\": {\n      \"get\": {\n        \"summary\": \"Retrieve a specific report by ID\",\n        \"parameters\": {\n          \"name\": \"reportID\",\n          \"in\": \"path\",\n          \"required\": true,\n          \"description\": \"Report ID\",\n          \"schema\": {\n            \"type\": \"integer\"\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Successfully retrieved report\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Report\"\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"Report not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/users/{userID}/conversations\": {\n      \"get\": {\n        \"summary\": \"Get a list of the specified user's conversations\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"User's conversation list retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/Conversation\"\n                  }\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"User not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"post\": {\n        \"summary\": \"Add a new conversation to a user's list of conversations\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Conversation\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Conversation created successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Conversation\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody\"\n          },\n          \"404\": {\n            \"description\": \"User not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/users/{userID}/conversations/{conversationID}\": {\n      \"get\": {\n        \"summary\": \"Get a specific conversation from a user's list of conversations\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"conversationID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Conversation ID\"\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Conversation details\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Conversation\"\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"Conversation or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"put\": {\n        \"summary\": \"Update a specific conversation in a user's list of conversations\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"conversationID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Conversation ID\"\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Conversation\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Conversation updated successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Conversation\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody\"\n          },\n          \"404\": {\n            \"description\": \"Conversation or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"delete\": {\n        \"summary\": \"Delete a specific conversation in a user's list of conversations\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"conversationID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Conversation ID\"\n          }\n        ],\n        \"responses\": {\n          \"204\": {\n            \"description\": \"Conversation deleted successfully\"\n          },\n          \"404\": {\n            \"description\": \"Conversation or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/users/{userID}/conversations/{conversationID}/messages\": {\n      \"get\": {\n        \"summary\": \"Get messages in a conversation\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"conversationID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Conversation ID\"\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"List of messages retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/Message\"\n                  }\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"Conversation or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"post\": {\n        \"summary\": \"Send a new message in a conversation\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"conversationID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Conversation ID\"\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Message\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Message created successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Message\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody\"\n          },\n          \"404\": {\n            \"description\": \"Conversation or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/users/{userID}/conversations/{conversationID}/messages/{messageID}\": {\n      \"get\": {\n        \"summary\": \"Get a specific message in a conversation\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"conversationID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Conversation ID\"\n          },\n          {\n            \"name\": \"messageID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Message ID\"\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Message retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Message\"\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"Message, conversation or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"put\": {\n        \"summary\": \"Update a specific message in a conversation\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"conversationID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Conversation ID\"\n          },\n          {\n            \"name\": \"messageID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Message ID\"\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Message\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Message updated successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Message\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody\"\n          },\n          \"404\": {\n            \"description\": \"Message, conversation or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"delete\": {\n        \"summary\": \"Delete a specific message in a conversation\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"conversationID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Conversation ID\"\n          },\n          {\n            \"name\": \"messageID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Message ID\"\n          }\n        ],\n        \"responses\": {\n          \"204\": {\n            \"description\": \"Message deleted successfully\"\n          },\n          \"404\": {\n            \"description\": \"Message, conversation or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/users/{userID}/cars\": {\n      \"get\": {\n        \"summary\": \"Get a list of the specified user's cars\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"User's car list retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/Car\"\n                  }\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"User not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"post\": {\n        \"summary\": \"Add a new car to a user's list of cars\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Car\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Car added successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Car\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody\"\n          },\n          \"404\": {\n            \"description\": \"User not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/users/{userID}/cars/{carID}\": {\n      \"get\": {\n        \"summary\": \"Get a specific car in a user's list of cars\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"carID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Car ID\"\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Car retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Car\"\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"Car or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"put\": {\n        \"summary\": \"Update a specific car in a user's list of cars\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"carID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Car ID\"\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Car\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Car updated successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Car\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody\"\n          },\n          \"404\": {\n            \"description\": \"Car or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"delete\": {\n        \"summary\": \"Delete a specific car in a user's list of cars\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"carID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Car ID\"\n          }\n        ],\n        \"responses\": {\n          \"204\": {\n            \"description\": \"Car deleted successfully\"\n          },\n          \"404\": {\n            \"description\": \"Car or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/requests\": {\n      \"get\": {\n        \"summary\": \"Retrieve a list of public requests for routes\",\n        \"parameters\": [\n          {\n            \"name\": \"Start\",\n            \"in\": \"query\",\n            \"description\": \"Starting point of the requested route\",\n            \"schema\": {\n              \"type\": \"string\"\n            }\n          },\n          {\n            \"name\": \"End\",\n            \"in\": \"query\",\n            \"description\": \"End point of the requested route\",\n            \"schema\": {\n              \"type\": \"string\"\n            }\n          },\n          {\n            \"name\": \"DateAndTime\",\n            \"in\": \"query\",\n            \"description\": \"Date and time that the requested route is to be driven at (UNIX timestamp)\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          },\n          {\n            \"name\": \"userID\",\n            \"in\": \"query\",\n            \"description\": \"ID of the user whose requests are to be retrieved\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Public requests retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/Request\"\n                  }\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid query parameters\"\n          },\n          \"404\": {\n            \"description\": \"No requests found for the specified criteria\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"post\": {\n        \"summary\": \"Creation of new request\",\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Request\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Successfully created request\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Request\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody or validation error\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/requests/{requestID}\": {\n      \"get\": {\n        \"summary\": \"Retrieve a specific request for a route by ID\",\n        \"parameters\": [\n          {\n            \"name\": \"requestID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"description\": \"Request ID\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Successfully retrieved request\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Request\"\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"Request not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"delete\": {\n        \"summary\": \"Delete a specific request for a route by ID\",\n        \"parameters\": [\n          {\n            \"name\": \"requestID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"description\": \"Request ID\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Successfully deleted request\"\n          },\n          \"404\": {\n            \"description\": \"Request not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"put\": {\n        \"summary\": \"Update a specific request by ID\",\n        \"parameters\": [\n          {\n            \"name\": \"requestID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"description\": \"Request ID\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Request\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Successfully updated request\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Request\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody or validation error\"\n          },\n          \"404\": {\n            \"description\": \"Request not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/users/{userID}/reviews\": {\n      \"get\": {\n        \"summary\": \"Get a list of reviews associated with the specified user\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"myReviews\",\n            \"in\": \"query\",\n            \"description\": \"If true, retrieve the reviews written by the user. If false, retrieve the reviews written about the user. If unused, retrieve both\",\n            \"schema\": {\n              \"type\": \"boolean\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"List of reviews retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/Review\"\n                  }\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"User not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"post\": {\n        \"summary\": \"Add a new review to the list of reviews associated with the specified user\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Review\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Review added successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Review\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody\"\n          },\n          \"404\": {\n            \"description\": \"User not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/users/{userID}/reviews/{reviewID}\": {\n      \"get\": {\n        \"summary\": \"Get a specific review from the list of reviews associated with the specified user\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"reviewID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Review ID\"\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Review retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Review\"\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"Review or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"put\": {\n        \"summary\": \"Update a specific review in the list of reviews associated with the specified user\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"reviewID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Review ID\"\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/Review\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Review updated successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/Review\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody\"\n          },\n          \"404\": {\n            \"description\": \"Review or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"delete\": {\n        \"summary\": \"Delete a specific review in the list of reviews associated with the specified user\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"User ID\"\n          },\n          {\n            \"name\": \"reviewID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"schema\": {\n              \"type\": \"integer\"\n            },\n            \"description\": \"Review ID\"\n          }\n        ],\n        \"responses\": {\n          \"204\": {\n            \"description\": \"Review deleted successfully\"\n          },\n          \"404\": {\n            \"description\": \"Review or user not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/users\": {\n      \"get\": {\n        \"summary\": \"Retrieve a list of the app's users\",\n        \"parameters\": [\n          {\n            \"name\": \"Name\",\n            \"in\": \"query\",\n            \"description\": \"Username\",\n            \"schema\": {\n              \"type\": \"string\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"User list retrieved successfully\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"type\": \"array\",\n                  \"items\": {\n                    \"$ref\": \"#/components/schemas/User\"\n                  }\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid query parameters\"\n          },\n          \"404\": {\n            \"description\": \"No users found for the given username\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"post\": {\n        \"summary\": \"Creation of new user\",\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/User\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Successfully created user\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/User\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody or validation error\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    },\n    \"/users/{userID}\": {\n      \"get\": {\n        \"summary\": \"Retrieve a specific user by ID\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"description\": \"User ID\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Successfully retrieved user\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/User\"\n                }\n              }\n            }\n          },\n          \"404\": {\n            \"description\": \"User not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"delete\": {\n        \"summary\": \"Delete a specific user by ID\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"description\": \"User ID\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Successfully deleted user\"\n          },\n          \"404\": {\n            \"description\": \"User not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      },\n      \"put\": {\n        \"summary\": \"Update a specific user by ID\",\n        \"parameters\": [\n          {\n            \"name\": \"userID\",\n            \"in\": \"path\",\n            \"required\": true,\n            \"description\": \"User ID\",\n            \"schema\": {\n              \"type\": \"integer\"\n            }\n          }\n        ],\n        \"requestBody\": {\n          \"required\": true,\n          \"content\": {\n            \"application/json\": {\n              \"schema\": {\n                \"$ref\": \"#/components/schemas/User\"\n              }\n            }\n          }\n        },\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Successfully updated user\",\n            \"content\": {\n              \"application/json\": {\n                \"schema\": {\n                  \"$ref\": \"#/components/schemas/User\"\n                }\n              }\n            }\n          },\n          \"400\": {\n            \"description\": \"Invalid requestBody or validation error\"\n          },\n          \"404\": {\n            \"description\": \"User not found\"\n          },\n          \"500\": {\n            \"description\": \"Internal server error\"\n          }\n        }\n      }\n    }\n  },\n  \"components\": {\n    \"schemas\": {\n      \"Route\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"RouteID\": {\n            \"type\": \"integer\"\n          },\n          \"Start\": {\n            \"type\": \"string\"\n          },\n          \"End\": {\n            \"type\": \"string\"\n          },\n          \"Stops\": {\n            \"type\": \"string\"\n          },\n          \"Comment\": {\n            \"type\": \"string\"\n          },\n          \"DateAndTime\": {\n            \"type\": \"integer\"\n          },\n          \"OccupiedSeats\": {\n            \"type\": \"integer\"\n          },\n          \"Rules\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"boolean\"\n            }\n          },\n          \"Timestamp\": {\n            \"type\": \"integer\"\n          }\n        },\n        \"required\": [\n          \"Start\",\n          \"End\",\n          \"Stops\",\n          \"DateAndTime\",\n          \"OccupiedSeats\"\n        ]\n      },\n      \"Report\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"Description\": {\n            \"type\": \"string\"\n          },\n          \"ReportID\": {\n            \"type\": \"integer\"\n          },\n          \"ReportedUser\": {\n            \"type\": \"integer\"\n          },\n          \"State\": {\n            \"type\": \"boolean\"\n          },\n          \"Timestamp\": {\n            \"type\": \"integer\"\n          }\n        },\n        \"required\": [\n          \"Description\",\n          \"ReportedUser\"\n        ]\n      },\n      \"Conversation\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"ConversationID\": {\n            \"type\": \"integer\"\n          },\n          \"ConversationName\": {\n            \"type\": \"string\"\n          },\n          \"Timestamp\": {\n            \"type\": \"integer\"\n          }\n        },\n        \"required\": [\n          \"ConversationName\"\n        ]\n      },\n      \"Message\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"MessageID\": {\n            \"type\": \"integer\"\n          },\n          \"MessageText\": {\n            \"type\": \"string\"\n          },\n          \"Timestamp\": {\n            \"type\": \"integer\"\n          }\n        },\n        \"required\": [\n          \"MessageText\",\n          \"Timestamp\"\n        ]\n      },\n      \"Car\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"CarID\": {\n            \"type\": \"integer\"\n          },\n          \"Seats\": {\n            \"type\": \"integer\"\n          },\n          \"ServiceDate\": {\n            \"type\": \"integer\"\n          },\n          \"MakeModel\": {\n            \"type\": \"string\"\n          },\n          \"LicensePlate\": {\n            \"type\": \"string\"\n          },\n          \"Timestamp\": {\n            \"type\": \"integer\"\n          }\n        },\n        \"required\": [\n          \"Seats\",\n          \"ServiceDate\",\n          \"MakeModel\",\n          \"LicensePlate\"\n        ]\n      },\n      \"Request\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"RequestID\": {\n            \"type\": \"integer\"\n          },\n          \"Description\": {\n            \"type\": \"string\"\n          },\n          \"Status\": {\n            \"type\": \"boolean\"\n          },\n          \"Start\": {\n            \"type\": \"string\"\n          },\n          \"End\": {\n            \"type\": \"string\"\n          },\n          \"DateAndTime\": {\n            \"type\": \"integer\"\n          },\n          \"Timestamp\": {\n            \"type\": \"integer\"\n          }\n        },\n        \"required\": [\n          \"Start\",\n          \"End\",\n          \"DateAndTime\"\n        ]\n      },\n      \"Review\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"ReviewID\": {\n            \"type\": \"integer\"\n          },\n          \"Rating\": {\n            \"type\": \"number\"\n          },\n          \"UserType\": {\n            \"type\": \"boolean\"\n          },\n          \"Description\": {\n            \"type\": \"string\"\n          },\n          \"ReviewedUser\": {\n            \"type\": \"integer\"\n          },\n          \"Timestamp\": {\n            \"type\": \"integer\"\n          }\n        },\n        \"required\": [\n          \"Rating\",\n          \"UserType\",\n          \"ReviewedUser\"\n        ]\n      },\n      \"User\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"UserID\": {\n            \"type\": \"integer\"\n          },\n          \"Name\": {\n            \"type\": \"string\"\n          },\n          \"PhoneNumber\": {\n            \"type\": \"integer\"\n          },\n          \"PassengerRating\": {\n            \"type\": \"number\"\n          },\n          \"DriverRating\": {\n            \"type\": \"number\"\n          },\n          \"Banned\": {\n            \"type\": \"boolean\"\n          },\n          \"Email\": {\n            \"type\": \"string\"\n          },\n          \"Password\": {\n            \"type\": \"string\"\n          },\n          \"IsAdmin\": {\n            \"type\": \"boolean\"\n          },\n          \"Timestamp\": {\n            \"type\": \"integer\"\n          }\n        },\n        \"required\": [\n          \"Name\",\n          \"PhoneNumber\",\n          \"Email\",\n          \"Password\"\n        ]\n      }\n    }\n  }\n}"
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "HopShare API",
+    "version": "1.0.1",
+    "description": "HopShare's application API"
+  },
+  "paths": {
+    "/routes": {
+      "get": {
+        "summary": "Retrieve a list of public routes",
+        "parameters": [
+          {
+            "name": "Start",
+            "in": "query",
+            "description": "Route's starting point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "End",
+            "in": "query",
+            "description": "Route's end point",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "NoSmoking",
+            "in": "query",
+            "description": "Smoking is not allowed",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "NoPets",
+            "in": "query",
+            "description": "Pets are not allowed",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "NoCats",
+            "in": "query",
+            "description": "Cats are not allowed",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "NoDogs",
+            "in": "query",
+            "description": "Dogs are not allowed",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "DateAndTime",
+            "in": "query",
+            "description": "Date and time that the route is to be driven at (UNIX timestamp)",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "userID",
+            "in": "query",
+            "description": "ID of the user whose routes are to be retrieved",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public routes retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Route"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters"
+          },
+          "404": {
+            "description": "No routes found for the specified criteria"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Creation of new route",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Route"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created route",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody or validation error"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/routes/{routeID}": {
+      "get": {
+        "summary": "Retrieve a specific route by ID",
+        "parameters": [
+          {
+            "name": "routeID",
+            "in": "path",
+            "required": true,
+            "description": "Route ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved route",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Route not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific route by ID",
+        "parameters": [
+          {
+            "name": "routeID",
+            "in": "path",
+            "required": true,
+            "description": "Route ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully deleted route"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Route not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a specific route by ID",
+        "parameters": [
+          {
+            "name": "routeID",
+            "in": "path",
+            "required": true,
+            "description": "Route ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Route"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated route",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody or validation error"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Route not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/reports": {
+      "post": {
+        "summary": "File a report against a user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Report"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully filed report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody or validation error"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve a list of reports",
+        "parameters": [
+          {
+            "name": "UserID",
+            "in": "query",
+            "description": "User ID of reported user",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "ReportID",
+            "in": "query",
+            "description": "Report ID",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "State",
+            "in": "query",
+            "description": "Report state (pending or reviewed)",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "Timestamp",
+            "in": "query",
+            "description": "Report UNIX timestamp (date and time of creation)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Reports retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Report"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: admin only"
+          },
+          "404": {
+            "description": "No reports found for the specified criteria"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/reports/{reportID}": {
+      "get": {
+        "summary": "Retrieve a specific report by ID",
+        "parameters": {
+          "name": "reportID",
+          "in": "path",
+          "required": true,
+          "description": "Report ID",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved report",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: admin only"
+          },
+          "404": {
+            "description": "Report not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/{userID}/conversations": {
+      "get": {
+        "summary": "Get a list of the specified user's conversations",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's conversation list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Conversation"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a new conversation to a user's list of conversations",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Conversation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Conversation created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Conversation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/{userID}/conversations/{conversationID}": {
+      "get": {
+        "summary": "Get a specific conversation from a user's list of conversations",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "conversationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Conversation ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Conversation details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Conversation"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not a member"
+          },
+          "404": {
+            "description": "Conversation or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a specific conversation in a user's list of conversations",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "conversationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Conversation ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Conversation"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Conversation updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Conversation"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Conversation or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific conversation in a user's list of conversations",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "conversationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Conversation ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Conversation deleted successfully"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Conversation or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/{userID}/conversations/{conversationID}/messages": {
+      "get": {
+        "summary": "Get messages in a conversation",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "conversationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Conversation ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of messages retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Message"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not a member"
+          },
+          "404": {
+            "description": "Conversation or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Send a new message in a conversation",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "conversationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Conversation ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Message created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not a member"
+          },
+          "404": {
+            "description": "Conversation or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/{userID}/conversations/{conversationID}/messages/{messageID}": {
+      "get": {
+        "summary": "Get a specific message in a conversation",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "conversationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Conversation ID"
+          },
+          {
+            "name": "messageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Message ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Message retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not a member"
+          },
+          "404": {
+            "description": "Message, conversation or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a specific message in a conversation",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "conversationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Conversation ID"
+          },
+          {
+            "name": "messageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Message ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Message"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Message updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Message, conversation or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific message in a conversation",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "conversationID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Conversation ID"
+          },
+          {
+            "name": "messageID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Message ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Message deleted successfully"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Message, conversation or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/{userID}/cars": {
+      "get": {
+        "summary": "Get a list of the specified user's cars",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User's car list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Car"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a new car to a user's list of cars",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Car"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Car added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Car"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/{userID}/cars/{carID}": {
+      "get": {
+        "summary": "Get a specific car in a user's list of cars",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "carID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Car ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Car retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Car"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Car or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a specific car in a user's list of cars",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "carID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Car ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Car"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Car updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Car"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Car or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific car in a user's list of cars",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "carID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Car ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Car deleted successfully"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Car or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/requests": {
+      "get": {
+        "summary": "Retrieve a list of public requests for routes",
+        "parameters": [
+          {
+            "name": "Start",
+            "in": "query",
+            "description": "Starting point of the requested route",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "End",
+            "in": "query",
+            "description": "End point of the requested route",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "DateAndTime",
+            "in": "query",
+            "description": "Date and time that the requested route is to be driven at (UNIX timestamp)",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "userID",
+            "in": "query",
+            "description": "ID of the user whose requests are to be retrieved",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public requests retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Request"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters"
+          },
+          "404": {
+            "description": "No requests found for the specified criteria"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Creation of new request",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody or validation error"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/requests/{requestID}": {
+      "get": {
+        "summary": "Retrieve a specific request for a route by ID",
+        "parameters": [
+          {
+            "name": "requestID",
+            "in": "path",
+            "required": true,
+            "description": "Request ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Request not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific request for a route by ID",
+        "parameters": [
+          {
+            "name": "requestID",
+            "in": "path",
+            "required": true,
+            "description": "Request ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully deleted request"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Request not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a specific request by ID",
+        "parameters": [
+          {
+            "name": "requestID",
+            "in": "path",
+            "required": true,
+            "description": "Request ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Request"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Request"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody or validation error"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Request not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/{userID}/reviews": {
+      "get": {
+        "summary": "Get a list of reviews associated with the specified user",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "myReviews",
+            "in": "query",
+            "description": "If true, retrieve the reviews written by the user. If false, retrieve the reviews written about the user. If unused, retrieve both",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of reviews retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a new review to the list of reviews associated with the specified user",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Review"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Review added successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/{userID}/reviews/{reviewID}": {
+      "get": {
+        "summary": "Get a specific review from the list of reviews associated with the specified user",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "reviewID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Review ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a specific review in the list of reviews associated with the specified user",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "reviewID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Review ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Review"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Review or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific review in the list of reviews associated with the specified user",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "User ID"
+          },
+          {
+            "name": "reviewID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Review ID"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Review deleted successfully"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "Review or user not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Retrieve a list of the app's users",
+        "parameters": [
+          {
+            "name": "Name",
+            "in": "query",
+            "description": "Username",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters"
+          },
+          "404": {
+            "description": "No users found for the given username"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Creation of new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successfully created user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody or validation error"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/users/{userID}": {
+      "get": {
+        "summary": "Retrieve a specific user by ID",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a specific user by ID",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully deleted user"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a specific user by ID",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "required": true,
+            "description": "User ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid requestBody or validation error"
+          },
+          "401": {
+            "description": "Missing Basic Authorization header"
+          },
+          "403": {
+            "description": "Forbidden: not the owner"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Route": {
+        "type": "object",
+        "properties": {
+          "RouteID": {
+            "type": "integer"
+          },
+          "Start": {
+            "type": "string"
+          },
+          "End": {
+            "type": "string"
+          },
+          "Stops": {
+            "type": "string"
+          },
+          "Comment": {
+            "type": "string"
+          },
+          "DateAndTime": {
+            "type": "integer"
+          },
+          "OccupiedSeats": {
+            "type": "integer"
+          },
+          "Rules": {
+            "type": "array",
+            "items": {
+              "type": "boolean"
+            }
+          },
+          "Timestamp": {
+            "type": "integer"
+          },
+          "UserID": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "RouteID",
+          "Start",
+          "End",
+          "Stops",
+          "DateAndTime",
+          "OccupiedSeats",
+          "Timestamp",
+          "UserID"
+        ]
+      },
+      "Report": {
+        "type": "object",
+        "properties": {
+          "ReportID": {
+            "type": "integer"
+          },
+          "Description": {
+            "type": "string"
+          },
+          "ReportedUser": {
+            "type": "integer"
+          },
+          "State": {
+            "type": "boolean"
+          },
+          "Timestamp": {
+            "type": "integer"
+          },
+          "UserID": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ReportID",
+          "Description",
+          "ReportedUser",
+          "State",
+          "Timestamp",
+          "UserID"
+        ]
+      },
+      "Conversation": {
+        "type": "object",
+        "properties": {
+          "ConversationID": {
+            "type": "integer"
+          },
+          "ConversationName": {
+            "type": "string"
+          },
+          "Members": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "Timestamp": {
+            "type": "integer"
+          },
+          "UserID": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ConversationID",
+          "ConversationName",
+          "Members",
+          "Timestamp",
+          "UserID"
+        ]
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "MessageID": {
+            "type": "integer"
+          },
+          "MessageText": {
+            "type": "string"
+          },
+          "Timestamp": {
+            "type": "integer"
+          },
+          "ConversationID": {
+            "type": "integer"
+          },
+          "UserID": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "MessageID",
+          "MessageText",
+          "Timestamp",
+          "ConversationID",
+          "UserID"
+        ]
+      },
+      "Car": {
+        "type": "object",
+        "properties": {
+          "CarID": {
+            "type": "integer"
+          },
+          "Seats": {
+            "type": "integer"
+          },
+          "ServiceDate": {
+            "type": "integer"
+          },
+          "MakeModel": {
+            "type": "string"
+          },
+          "LicensePlate": {
+            "type": "string"
+          },
+          "Timestamp": {
+            "type": "integer"
+          },
+          "UserID": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "CarID",
+          "Seats",
+          "ServiceDate",
+          "MakeModel",
+          "LicensePlate",
+          "Timestamp",
+          "UserID"
+        ]
+      },
+      "Request": {
+        "type": "object",
+        "properties": {
+          "RequestID": {
+            "type": "integer"
+          },
+          "Description": {
+            "type": "string"
+          },
+          "Status": {
+            "type": "boolean"
+          },
+          "Start": {
+            "type": "string"
+          },
+          "End": {
+            "type": "string"
+          },
+          "DateAndTime": {
+            "type": "integer"
+          },
+          "Timestamp": {
+            "type": "integer"
+          },
+          "UserID": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "RequestID",
+          "Status",
+          "Start",
+          "End",
+          "DateAndTime",
+          "Timestamp",
+          "UserID"
+        ]
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "ReviewID": {
+            "type": "integer"
+          },
+          "Rating": {
+            "type": "number"
+          },
+          "UserType": {
+            "type": "boolean"
+          },
+          "Description": {
+            "type": "string"
+          },
+          "ReviewedUser": {
+            "type": "integer"
+          },
+          "Timestamp": {
+            "type": "integer"
+          },
+          "UserID": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ReviewID",
+          "Rating",
+          "UserType",
+          "ReviewedUser",
+          "Timestamp",
+          "UserID"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "UserID": {
+            "type": "integer"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "PhoneNumber": {
+            "type": "integer"
+          },
+          "PassengerRating": {
+            "type": "number"
+          },
+          "DriverRating": {
+            "type": "number"
+          },
+          "Banned": {
+            "type": "boolean"
+          },
+          "Email": {
+            "type": "string"
+          },
+          "Password": {
+            "type": "string"
+          },
+          "IsAdmin": {
+            "type": "boolean"
+          },
+          "Timestamp": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "UserID",
+          "Name",
+          "PhoneNumber",
+          "PassengerRating",
+          "DriverRating",
+          "Banned",
+          "Email",
+          "Password",
+          "IsAdmin",
+          "Timestamp"
+        ]
+      }
+    }
+  }
+}
+

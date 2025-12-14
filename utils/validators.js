@@ -49,7 +49,7 @@ export const conversationBodySchema = Joi.object({
 export const messageBodySchema = Joi.object({
   MessageID: Joi.number().integer(),
   MessageText: Joi.string().required(),
-  Timestamp: Joi.number().integer().required()
+  Timestamp: Joi.number().integer()
 }).required();
 
 export const carBodySchema = Joi.object({
@@ -107,3 +107,4 @@ export const usersQuerySchema = Joi.object({
 export const idParamSchema = Joi.object({
   id: Joi.number().integer().required()
 });
+
