@@ -1,6 +1,6 @@
 {
   "name": "hopshare-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "HopShare - Intuitive, easy-to-use application that facilitates carpooling in an organized manner.",
   "type": "module",
   "main": "server.js",
