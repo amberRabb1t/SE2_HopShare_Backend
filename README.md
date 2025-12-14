@@ -48,7 +48,7 @@ curl http://localhost:3000/health
 
 - Mutating endpoints (POST/PUT/DELETE) require HTTP Basic when `BASIC_AUTH_ENABLED=true` (default).
 - Use one of the seeded credentials when in mock mode:
-  - alice@example.com / password123
+  - alice@example.com / password123 (admin account)
   - bob@example.com / password123
   - charlie@example.com / password123
 
