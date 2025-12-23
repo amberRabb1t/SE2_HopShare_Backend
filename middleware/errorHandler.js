@@ -38,3 +38,4 @@ export function errorHandler(err, _req, res, _next) {
   console.error('[ERROR]', err);
   return sendError(res, 'Internal server error', ERROR_CODES.INTERNAL_ERROR, 500, err);
 }
+

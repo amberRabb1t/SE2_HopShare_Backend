@@ -34,3 +34,4 @@ export function sendError(res, message, code = null, status = 500, error = null)
     error: code || error?.name || 'ERROR'
   });
 }
+

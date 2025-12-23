@@ -57,7 +57,7 @@ export async function list(name) {
  */
 export async function create(payload) {
   const { useMockData } = dbState();
-  const toCreate = { ...payload, Timestamp: payload.Timestamp || Math.floor(Date.now() / 1000) };
+  const toCreate = { ...payload, Banned: false, IsAdmin: false, Timestamp: payload.Timestamp || Math.floor(Date.now() / 1000) };
   if (!toCreate.Password.startsWith('$2')) {
     toCreate.Password = await bcrypt.hash(toCreate.Password, 10);
   }

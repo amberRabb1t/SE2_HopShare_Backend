@@ -12,3 +12,4 @@ How to run:
 npm install
 npm test
 npm run coverage  # prints summary from the last run
+
