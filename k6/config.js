@@ -82,7 +82,7 @@ export const stress = {
 };
 
 export function GETandCheckStatus (endpoint) {
-    const resp = http.get(endpoint);
+    const resp = http.get(endpoint, { responseType: 'none' }); // Disable response body buffering to save memory
 
     check(resp, { 'Is status 200?': (r) => r.status === 200 });
     check(resp, { 'Is status 2xx?': (r) => Math.floor(r.status/100) === 2 });
