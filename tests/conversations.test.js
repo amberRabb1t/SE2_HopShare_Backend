@@ -16,7 +16,6 @@ const aliceAuth = { email: 'alice@example.com', password: 'password123' };
 const aliceId = 1;
 const aliceConversationId = 1;
 const bobId = 2;
-const bobConversationId = 2;
 const charlieId = 3;
 const charlieConversationId = 3;
 
