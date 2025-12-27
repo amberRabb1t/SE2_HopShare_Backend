@@ -3,6 +3,16 @@ import { sleep, check } from 'k6';
 
 // Maximum number of virtual users for the tests
 const maxVirtualUsers = 8400; // 8400 should be a little bit below the system's breaking point (found by stress test)
+const testDurationInMins = 5; // GitHub runners have strict usage limits
+
+function getTestStageDurations(testDuration, holdStages, rampStages, holdToRampDurationRatio) {
+    const hold = testDuration * holdToRampDurationRatio / (holdToRampDurationRatio * holdStages + rampStages);
+    const ramp = hold / holdToRampDurationRatio;
+    return { hold, ramp };
+}
+
+const loadDurationsInMins = getTestStageDurations(testDurationInMins, 1, 2, 10);
+const spikeDurationsInMins = getTestStageDurations(testDurationInMins, 2, 6, 10);
 
 // Common thresholds for all test types, in accordance with Non-Functional Requirements
 const testingThresholds = {
@@ -20,9 +30,9 @@ const testingThresholds = {
 
 export const load = {
     stages: [
-        { duration: '10m', target: maxVirtualUsers }, //ramp up to maximum number of users
-        { duration: '100m', target: maxVirtualUsers }, // stable at maximum number of users
-        { duration: '10m', target: 0 } // ramp down to 0 users        
+        { duration: `${loadDurationsInMins.ramp}m`, target: maxVirtualUsers }, //ramp up to maximum number of users
+        { duration: `${loadDurationsInMins.hold}m`, target: maxVirtualUsers }, // stable at maximum number of users
+        { duration: `${loadDurationsInMins.ramp}m`, target: 0 } // ramp down to 0 users
     ],
     thresholds: testingThresholds
 };
@@ -44,14 +54,14 @@ export const soak = {
 
 export const spike = {
     stages: [
-        { duration: '2m', target: maxVirtualUsers/2 }, // Ramp up to from 0 to half of max capacity
-        { duration: '2m', target: maxVirtualUsers/4 }, // Ramp down from half capacity to one fourth
-        { duration: '20m', target: maxVirtualUsers/4 }, // Hold at one fourth to stabilize the system
-        { duration: '2m', target: 3*maxVirtualUsers/4 }, // Ramp up from one fourth to three fourths
-        { duration: '2m', target: maxVirtualUsers/4 }, // Ramp down from three fourths to one fourth
-        { duration: '20m', target: maxVirtualUsers/4 }, // Hold at one fourth to stabilize the system
-        { duration: '2m', target: maxVirtualUsers }, // Ramp up from one fourth to max capacity
-        { duration: '2m', target: 0 } // Ramp down from max capacity to 0 users
+        { duration: `${spikeDurationsInMins.ramp}m`, target: maxVirtualUsers/2 }, // Ramp up to from 0 to half of max capacity
+        { duration: `${spikeDurationsInMins.ramp}m`, target: maxVirtualUsers/4 }, // Ramp down from half capacity to one fourth
+        { duration: `${spikeDurationsInMins.hold}m`, target: maxVirtualUsers/4 }, // Hold at one fourth to stabilize the system
+        { duration: `${spikeDurationsInMins.ramp}m`, target: 3*maxVirtualUsers/4 }, // Ramp up from one fourth to three fourths
+        { duration: `${spikeDurationsInMins.ramp}m`, target: maxVirtualUsers/4 }, // Ramp down from three fourths to one fourth
+        { duration: `${spikeDurationsInMins.hold}m`, target: maxVirtualUsers/4 }, // Hold at one fourth to stabilize the system
+        { duration: `${spikeDurationsInMins.ramp}m`, target: maxVirtualUsers }, // Ramp up from one fourth to max capacity
+        { duration: `${spikeDurationsInMins.ramp}m`, target: 0 } // Ramp down from max capacity to 0 users
     ],
     thresholds: testingThresholds
 };

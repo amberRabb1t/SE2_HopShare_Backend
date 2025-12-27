@@ -2,7 +2,9 @@ name: CICD
 
 on:
   push:
-    branches: [ main ]
+    branches:
+    - 'main'
+    - 'develop'
   pull_request:
   workflow_dispatch:
 
@@ -24,6 +26,36 @@ jobs:
 
       - name: Run tests
         run: npm test
+      
+      - name: Start Node.js server
+        run: |
+          # nohup ensures the process survives
+          nohup node server.js > server.log 2>&1 & 
+          echo "Server started with PID $!"
+      
+      - name: Wait for server to be ready
+        run: |
+          for i in {1..30}; do
+            if curl -f http://localhost:3000 > /dev/null 2>&1; then
+              echo "Server is ready!"
+              exit 0
+            fi
+            echo "Waiting for server... (attempt $i/30)"
+            sleep 2
+          done
+          echo "Server failed to start"
+          cat server.log # Print logs if it fails so you know why
+          exit 1
+
+      - name: Setup K6
+        uses: grafana/setup-k6-action@v1
+
+      - name: Run local k6 test
+        uses: grafana/run-k6-action@v1
+        with:
+          path: |
+            ./k6/load/*.load.test.js
+            ./k6/spike/*.spike.test.js
 
   cd:
     runs-on: ubuntu-latest
