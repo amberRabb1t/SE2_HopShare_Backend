@@ -4,7 +4,7 @@ import { authRequired } from '../middleware/auth.js';
 import { authorizeOwner } from '../middleware/authorize.js';
 import { requestBodySchema, requestQuerySchema } from '../utils/validators.js';
 import * as controller from '../controllers/requestController.js';
-import * as reqsService from '../services/requestService.js';
+import { get as reqsServiceGet } from '../services/requestService.js';
 
 const router = Router();
 
@@ -21,7 +21,7 @@ router.get('/:requestID', controller.getRequest);
 router.put(
   '/:requestID',
   authRequired(),
-  authorizeOwner(async (req) => reqsService.get(Number(req.params.requestID))),
+  authorizeOwner(async (req) => reqsServiceGet(Number(req.params.requestID))),
   validate({ body: requestBodySchema }),
   controller.updateRequest
 );
@@ -29,7 +29,7 @@ router.put(
 router.delete(
   '/:requestID',
   authRequired(),
-  authorizeOwner(async (req) => reqsService.get(Number(req.params.requestID))),
+  authorizeOwner(async (req) => reqsServiceGet(Number(req.params.requestID))),
   controller.deleteRequest
 );
 

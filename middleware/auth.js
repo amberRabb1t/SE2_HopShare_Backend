@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
-import { dbState } from '../config/database.js';
 import { ERROR_CODES, AppError } from '../config/constants.js';
-import * as usersService from '../services/userService.js';
+import { findByEmail as userServiceFindByEmail } from '../services/userService.js';
 
 /**
  * Parse Basic Authorization header and return { username, password }.
@@ -26,7 +25,7 @@ function parseBasicAuth(req) {
  * @param {string} password plain
  */
 async function authenticate(username, password) {
-  const user = await usersService.findByEmail(username);
+  const user = await userServiceFindByEmail(username);
   if (!user) {
     throw new AppError('Invalid credentials', 401, ERROR_CODES.UNAUTHORIZED);
   }

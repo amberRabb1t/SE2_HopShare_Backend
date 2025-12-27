@@ -5,8 +5,8 @@ import { authorizeOwner } from '../middleware/authorize.js';
 import Joi from 'joi';
 import { reviewBodySchema } from '../utils/validators.js';
 import * as controller from '../controllers/reviewController.js';
-import * as revService from '../services/reviewService.js';
-import * as userService from '../services/userService.js';
+import { get as reviewServiceGet } from '../services/reviewService.js';
+import { get as userServiceGet } from '../services/userService.js';
 
 const router = Router({ mergeParams: true });
 
@@ -18,7 +18,7 @@ router.get('/', validate({ query: reviewsQuerySchema }), controller.listUserRevi
 
 router.post('/', 
   authRequired(),
-  authorizeOwner(async (req) => userService.get(Number(req.params.userID))),
+  authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))),
   validate({ body: reviewBodySchema }), 
   controller.createReview
 );
@@ -28,7 +28,7 @@ router.get('/:reviewID', controller.getReview);
 router.put(
   '/:reviewID',
   authRequired(),
-  authorizeOwner(async (req) => revService.get(Number(req.params.userID), Number(req.params.reviewID))),
+  authorizeOwner(async (req) => reviewServiceGet(Number(req.params.userID), Number(req.params.reviewID))),
   validate({ body: reviewBodySchema }),
   controller.updateReview
 );
@@ -36,7 +36,7 @@ router.put(
 router.delete(
   '/:reviewID',
   authRequired(),
-  authorizeOwner(async (req) => revService.get(Number(req.params.userID), Number(req.params.reviewID))),
+  authorizeOwner(async (req) => reviewServiceGet(Number(req.params.userID), Number(req.params.reviewID))),
   controller.deleteReview
 );
 

@@ -4,7 +4,7 @@ import { authRequired } from '../middleware/auth.js';
 import { authorizeOwner } from '../middleware/authorize.js';
 import { usersQuerySchema, userBodySchema } from '../utils/validators.js';
 import * as controller from '../controllers/userController.js';
-import * as userService from '../services/userService.js';
+import { get as userServiceGet } from '../services/userService.js';
 
 const router = Router();
 
@@ -16,7 +16,7 @@ router.get('/:userID', controller.getUser);
 router.put(
   '/:userID',
   authRequired(),
-  authorizeOwner(async (req) => userService.get(Number(req.params.userID))),
+  authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))),
   validate({ body: userBodySchema }),
   controller.updateUser
 );
@@ -24,7 +24,7 @@ router.put(
 router.delete(
   '/:userID',
   authRequired(),
-  authorizeOwner(async (req) => userService.get(Number(req.params.userID))),
+  authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))),
   controller.deleteUser
 );
 

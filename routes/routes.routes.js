@@ -4,7 +4,7 @@ import { authRequired } from '../middleware/auth.js';
 import { authorizeOwner } from '../middleware/authorize.js';
 import { routeBodySchema, routeQuerySchema } from '../utils/validators.js';
 import * as controller from '../controllers/routeController.js';
-import * as routesService from '../services/routeService.js';
+import { get as routesServiceGet } from '../services/routeService.js';
 
 const router = Router();
 
@@ -21,7 +21,7 @@ router.get('/:routeID', controller.getRoute);
 router.put(
   '/:routeID',
   authRequired(),
-  authorizeOwner(async (req) => routesService.get(Number(req.params.routeID))),
+  authorizeOwner(async (req) => routesServiceGet(Number(req.params.routeID))),
   validate({ body: routeBodySchema }),
   controller.updateRoute
 );
@@ -29,7 +29,7 @@ router.put(
 router.delete(
   '/:routeID',
   authRequired(),
-  authorizeOwner(async (req) => routesService.get(Number(req.params.routeID))),
+  authorizeOwner(async (req) => routesServiceGet(Number(req.params.routeID))),
   controller.deleteRoute
 );
 
