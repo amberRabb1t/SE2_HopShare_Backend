@@ -27,7 +27,7 @@ export async function list(filters = {}) {
 
 export async function create(payload) {
   const { useMockData } = dbState();
-  const toCreate = { ...payload, State: payload.State ?? false, Timestamp: payload.Timestamp || Math.floor(Date.now() / 1000) };
+  const toCreate = { ...payload, State: false, Timestamp: payload.Timestamp || Math.floor(Date.now() / 1000) };
   if (useMockData) {
     toCreate.ReportID = toCreate.ReportID || getNextId(reports, 'ReportID');
     reports.push(toCreate);
