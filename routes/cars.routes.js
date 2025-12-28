@@ -9,31 +9,37 @@ import { get as userServiceGet } from '../services/userService.js';
 
 const router = Router({ mergeParams: true });
 
-router.get('/', controller.listCars);
-router.get('/:carID', controller.getCar);
+// List user's cars
+router.get('/', controller.listCars); // no authentication required
 
-// Only the user specified in the API endpoint (by userID) can add a car to their account 
+// Get user's car
+router.get('/:carID', controller.getCar); // no authentication required
+
+// Add car to user's account
 router.post(
   '/',
   authRequired(),
+  // Only the user specified in the API endpoint (by userID) can add a car to their account
   authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))),
   validate({ body: carBodySchema }),
   controller.createCar
 );
 
-// Only the owner of the car can update it
+// Update car
 router.put(
   '/:carID',
   authRequired(),
+  // Only the owner of the car can update it
   authorizeOwner(async (req) => carServiceGet(Number(req.params.userID), Number(req.params.carID))),
   validate({ body: carBodySchema }),
   controller.updateCar
 );
 
-// Only the owner of the car can delete it
+// Delete car
 router.delete(
   '/:carID',
   authRequired(),
+  // Only the owner of the car can delete it
   authorizeOwner(async (req) => carServiceGet(Number(req.params.userID), Number(req.params.carID))),
   controller.deleteCar
 );

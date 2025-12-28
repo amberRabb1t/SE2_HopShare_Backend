@@ -32,6 +32,10 @@ test.after.always(async () => {
   admin overrides, etc.
 */
 
+// ---------------
+// Success cases |
+// ---------------
+
 test.serial('List requests (GET /requests)', async (t) => {
   const res = await client.get('requests');
   t.is(res.statusCode, 200);
@@ -65,13 +69,6 @@ test.serial('Get request by ID (GET /requests/:requestID)', async (t) => {
   t.truthy(res.body.message);
   t.is(res.body.data.RequestID, createdRequestId);
 });
-test.serial('Get non-existent request (GET /requests/:requestID)', async (t) => {
-  const res = await client.get('requests/676767');
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
 
 test.serial('Update request (PUT /requests/:requestID)', async (t) => {
   const res = await authClient.put(`requests/${createdRequestId}`, {
@@ -86,6 +83,71 @@ test.serial('Update request (PUT /requests/:requestID)', async (t) => {
   t.is(res.body.success, true);
   t.truthy(res.body.message);
   t.is(res.body.data.End, 'City C');
+});
+
+// -----------------------
+// Various failure cases |
+// -----------------------
+
+// --------------
+// Get failures |
+// --------------
+
+test.serial('Get non-existent request (GET /requests/:requestID)', async (t) => {
+  const res = await client.get('requests/676767');
+  t.is(res.statusCode, 404);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
+});
+
+// -----------------
+// Create failures |
+// -----------------
+
+test.serial('Create request (POST /requests) with invalid credentials', async (t) => {
+  const payload = {
+    Start: 'City A',
+    End: 'City B',
+    DateAndTime: Math.floor(Date.now() / 1000) + 86400,
+    Description: 'Need ride tomorrow'
+  };
+  const res = await client.post('requests', { json: payload });
+	t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+	t.truthy(res.body.message);
+});
+
+test.serial('Create request (POST /requests) with invalid body', async (t) => {
+  const payload = {
+    // Missing Start
+    End: 'City B',
+    DateAndTime: Math.floor(Date.now() / 1000) + 86400,
+    Description: 'Need ride tomorrow'
+  };
+  const res = await authClient.post('requests', { json: payload });
+  t.is(res.statusCode, 400);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+// -----------------
+// Update failures |
+// -----------------
+
+test.serial('Update non-existent request (PUT /requests/:requestID)', async (t) => {
+  const res = await authClient.put('requests/676767', {
+    json: {
+      Start: 'City A',
+      End: 'City C',
+      DateAndTime: Math.floor(Date.now() / 1000) + 172800,
+      Description: 'Updated route needed'
+    }
+  });
+  t.is(res.statusCode, 404);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
 });
 
 test.serial('Update request (PUT /requests/:requestID) with invalid body', async (t) => {
@@ -130,6 +192,10 @@ test.serial('Update request (PUT /requests/:requestID) with invalid authorizatio
 	t.truthy(res.body.message);
 });
 
+// -----------------
+// Delete failures |
+// -----------------
+
 test.serial('Delete request (DELETE /requests/:requestID) with invalid credentials', async (t) => {
   const res = await client.delete(`requests/${createdRequestId}`);
 	t.is(res.statusCode, 401);
@@ -144,41 +210,6 @@ test.serial('Delete request (DELETE /requests/:requestID) with invalid authoriza
 	t.truthy(res.body.message);
 });
 
-test.serial('Delete request (DELETE /requests/:requestID)', async (t) => {
-  const res = await authClient.delete(`requests/${createdRequestId}`);
-  t.is(res.statusCode, 204);
-  t.falsy(res.body);
-	t.truthy(res.statusMessage);
-});
-
-test.serial('Create request (POST /requests) with invalid body', async (t) => {
-  const payload = {
-    // Missing Start
-    End: 'City B',
-    DateAndTime: Math.floor(Date.now() / 1000) + 86400,
-    Description: 'Need ride tomorrow'
-  };
-  const res = await authClient.post('requests', { json: payload });
-  t.is(res.statusCode, 400);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Update non-existent request (PUT /requests/:requestID)', async (t) => {
-  const res = await authClient.put('requests/676767', {
-    json: {
-      Start: 'City A',
-      End: 'City C',
-      DateAndTime: Math.floor(Date.now() / 1000) + 172800,
-      Description: 'Updated route needed'
-    }
-  });
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
-
 test.serial('Delete non-existent request (DELETE /requests/:requestID)', async (t) => {
   const res = await authClient.delete('requests/676767');
   t.is(res.statusCode, 404);
@@ -187,20 +218,20 @@ test.serial('Delete non-existent request (DELETE /requests/:requestID)', async (
   t.is(res.body.error, 'NOT_FOUND');
 });
 
-test.serial('Create request (POST /requests) with invalid credentials', async (t) => {
-  const payload = {
-    Start: 'City A',
-    End: 'City B',
-    DateAndTime: Math.floor(Date.now() / 1000) + 86400,
-    Description: 'Need ride tomorrow'
-  };
-  const res = await client.post('requests', { json: payload });
-	t.is(res.statusCode, 401);
-  t.is(res.body.success, false);
-	t.truthy(res.body.message);
+// ---------------------
+// Successful deletion |
+// ---------------------
+
+test.serial('Delete request (DELETE /requests/:requestID)', async (t) => {
+  const res = await authClient.delete(`requests/${createdRequestId}`);
+  t.is(res.statusCode, 204);
+  t.falsy(res.body);
+	t.truthy(res.statusMessage);
 });
 
-// Admin overrides
+// -----------------
+// Admin overrides |
+// -----------------
 
 test.serial('Update request (PUT /requests/:requestID) via admin override', async (t) => {
   const res = await adminClient.put(`requests/${charlieRequestId}`, {

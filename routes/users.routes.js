@@ -8,25 +8,29 @@ import { get as userServiceGet } from '../services/userService.js';
 
 const router = Router();
 
-router.get('/', validate({ query: usersQuerySchema }), controller.listUsers);
-router.post('/', validate({ body: userBodySchema }), controller.createUser);
+// List users with optional query parameters
+router.get('/', validate({ query: usersQuerySchema }), controller.listUsers); // authentication not required
 
-router.get('/:userID', controller.getUser);
+// Create user
+router.post('/', validate({ body: userBodySchema }), controller.createUser); // authentication not required
 
-// Only the owner of the user account can update it
+// Get user
+router.get('/:userID', controller.getUser); // authentication not required
+
+// Update user
 router.put(
   '/:userID',
   authRequired(),
-  authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))),
+  authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))), // Only the owner of the user account can update it
   validate({ body: userBodySchema }),
   controller.updateUser
 );
 
-// Only the owner of the user account can delete it
+// Delete user
 router.delete(
   '/:userID',
   authRequired(),
-  authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))),
+  authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))), // Only the owner of the user account can delete it
   controller.deleteUser
 );
 

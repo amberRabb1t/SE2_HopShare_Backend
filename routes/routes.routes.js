@@ -8,30 +8,33 @@ import { get as routesServiceGet } from '../services/routeService.js';
 
 const router = Router();
 
-router.get('/', validate({ query: routeQuerySchema }), controller.listRoutes);
+// List all routes with optional query parameters for filtering
+router.get('/', validate({ query: routeQuerySchema }), controller.listRoutes); // no authentication required
 
+// Create route
 router.post('/', 
   authRequired(), // Anonymous guests cannot create routes
   validate({ body: routeBodySchema }), 
   controller.createRoute
 );
 
-router.get('/:routeID', controller.getRoute);
+// Get route
+router.get('/:routeID', controller.getRoute); // no authentication required
 
-// Only the owner of the route can modify it
+// Update route
 router.put(
   '/:routeID',
   authRequired(),
-  authorizeOwner(async (req) => routesServiceGet(Number(req.params.routeID))),
+  authorizeOwner(async (req) => routesServiceGet(Number(req.params.routeID))), // Only the owner of the route can modify it
   validate({ body: routeBodySchema }),
   controller.updateRoute
 );
 
-// Only the owner of the route can delete it
+// Delete route
 router.delete(
   '/:routeID',
   authRequired(),
-  authorizeOwner(async (req) => routesServiceGet(Number(req.params.routeID))),
+  authorizeOwner(async (req) => routesServiceGet(Number(req.params.routeID))), // Only the owner of the route can delete it
   controller.deleteRoute
 );
 

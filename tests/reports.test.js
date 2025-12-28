@@ -31,6 +31,10 @@ test.after.always(async () => {
   admin overrides, etc.
 */
 
+// ---------------
+// Success cases |
+// ---------------
+
 let createdReportId;
 
 test.serial('Create report (POST /reports)', async (t) => {
@@ -47,18 +51,6 @@ test.serial('Create report (POST /reports)', async (t) => {
   createdReportId = res.body.data.ReportID;
 });
 
-test.serial('Create report (POST /reports) with invalid credentials', async (t) => {
-  const res = await client.post('reports', {
-    json: {
-      Description: 'Test report No. 2',
-      ReportedUser: 1
-    }
-  });
-  t.is(res.statusCode, 401);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
 test.serial('List reports (GET /reports?UserID=2)', async (t) => {
   const res = await adminClient.get('reports', { searchParams: { UserID: 2 } });
   t.is(res.statusCode, 200);
@@ -73,6 +65,22 @@ test.serial('Get report by ID (GET /reports/:reportID)', async (t) => {
   t.is(res.body.success, true);
   t.truthy(res.body.message);
   t.is(res.body.data.ReportID, createdReportId);
+});
+
+// ---------------
+// Failure cases |
+// ---------------
+
+test.serial('Create report (POST /reports) with invalid credentials', async (t) => {
+  const res = await client.post('reports', {
+    json: {
+      Description: 'Test report No. 2',
+      ReportedUser: 1
+    }
+  });
+  t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
 });
 
 test.serial('Get non-existent report (GET /reports/:reportID)', async (t) => {

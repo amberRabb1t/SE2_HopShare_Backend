@@ -10,35 +10,41 @@ import { get as userServiceGet } from '../services/userService.js';
 
 const router = Router({ mergeParams: true });
 
+// Determines whether to list reviews the user has written or reviews about the user (or both if no filter is provided)
 const reviewsQuerySchema = Joi.object({
   myReviews: Joi.boolean()
 });
 
-router.get('/', validate({ query: reviewsQuerySchema }), controller.listUserReviews);
+// List reviews for a user, with optional filtering
+router.get('/', validate({ query: reviewsQuerySchema }), controller.listUserReviews); // no authentication required
 
-// Only the user specified in the API endpoint (by userID) can add a review to their account
+// Add a review to a user's account
 router.post('/', 
   authRequired(),
+  // Only the user specified in the API endpoint (by userID) can add a review to their account
   authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))),
   validate({ body: reviewBodySchema }), 
   controller.createReview
 );
 
-router.get('/:reviewID', controller.getReview);
+// Get review
+router.get('/:reviewID', controller.getReview); // no authentication required
 
-// Only the owner of the review can update it
+// Update review
 router.put(
   '/:reviewID',
   authRequired(),
+  // Only the owner of the review can update it
   authorizeOwner(async (req) => reviewServiceGet(Number(req.params.userID), Number(req.params.reviewID))),
   validate({ body: reviewBodySchema }),
   controller.updateReview
 );
 
-// Only the owner of the review can delete it
+// Delete review
 router.delete(
   '/:reviewID',
   authRequired(),
+  // Only the owner of the review can delete it
   authorizeOwner(async (req) => reviewServiceGet(Number(req.params.userID), Number(req.params.reviewID))),
   controller.deleteReview
 );

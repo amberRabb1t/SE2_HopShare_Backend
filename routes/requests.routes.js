@@ -8,30 +8,33 @@ import { get as reqsServiceGet } from '../services/requestService.js';
 
 const router = Router();
 
-router.get('/', validate({ query: requestQuerySchema }), controller.listRequests);
+// List all requests with optional query parameters for filtering/pagination
+router.get('/', validate({ query: requestQuerySchema }), controller.listRequests); // no authentication required
 
+// Create request
 router.post('/', 
   authRequired(), // Anonymous guests cannot create requests
   validate({ body: requestBodySchema }), 
   controller.createRequest
 );
 
-router.get('/:requestID', controller.getRequest);
+// Get request
+router.get('/:requestID', controller.getRequest); // no authentication required
 
-// Only the owner of the request can modify it
+// Update request
 router.put(
   '/:requestID',
   authRequired(),
-  authorizeOwner(async (req) => reqsServiceGet(Number(req.params.requestID))),
+  authorizeOwner(async (req) => reqsServiceGet(Number(req.params.requestID))), // Only the owner of the request can modify it
   validate({ body: requestBodySchema }),
   controller.updateRequest
 );
 
-// Only the owner of the request can delete it
+// Delete request
 router.delete(
   '/:requestID',
   authRequired(),
-  authorizeOwner(async (req) => reqsServiceGet(Number(req.params.requestID))),
+  authorizeOwner(async (req) => reqsServiceGet(Number(req.params.requestID))),  // Only the owner of the request can delete it
   controller.deleteRequest
 );
 

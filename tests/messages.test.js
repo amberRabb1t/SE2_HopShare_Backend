@@ -47,6 +47,10 @@ test.after.always(async () => {
   admin overrides, etc.
 */
 
+// ---------------
+// Success cases |
+// ---------------
+
 let createdMessageId;
 
 test.serial('Create message (POST /users/:userID/conversations/:conversationID/messages)', async (t) => {
@@ -78,6 +82,25 @@ test.serial('Get message by ID (GET /users/:userID/conversations/:conversationID
   t.is(res.body.data.MessageID, createdMessageId);
 });
 
+test.serial('Update message (PUT /users/:userID/conversations/:conversationID/messages/:messageID)', async (t) => {
+  const res = await authClient.put(`users/${bobId}/conversations/${bobConversationId}/messages/${createdMessageId}`, {
+    json: {
+      MessageText: 'Edited message text'
+    }
+  });
+  t.is(res.statusCode, 200);
+  t.is(res.body.success, true);
+  t.truthy(res.body.message);
+});
+
+// -----------------------
+// Various failure cases |
+// -----------------------
+
+// ---------------
+// List failures |
+// ---------------
+
 test.serial('List messages (GET /users/:userID/conversations/:conversationID/messages) of non-existent user', async (t) => {
   const res = await authClient.get(`users/676767/conversations/${bobConversationId}/messages`);
   t.is(res.statusCode, 404);
@@ -91,6 +114,10 @@ test.serial('List messages (GET /users/:userID/conversations/:conversationID/mes
   t.is(res.body.success, false);
   t.truthy(res.body.message);
 });
+
+// --------------
+// Get failures |
+// --------------
 
 test.serial('Get non-existent message (GET /users/:userID/conversations/:conversationID/messages/:messageID)', async (t) => {
   const res = await authClient.get(`users/${bobId}/conversations/${bobConversationId}/messages/676767`);
@@ -116,70 +143,9 @@ test.serial('Get message (GET /users/:userID/conversations/:conversationID/messa
   t.is(res.body.error, 'NOT_FOUND');
 });
 
-test.serial('Update message (PUT /users/:userID/conversations/:conversationID/messages/:messageID)', async (t) => {
-  const res = await authClient.put(`users/${bobId}/conversations/${bobConversationId}/messages/${createdMessageId}`, {
-    json: {
-      MessageText: 'Edited message text'
-    }
-  });
-  t.is(res.statusCode, 200);
-  t.is(res.body.success, true);
-  t.truthy(res.body.message);
-});
-
-test.serial('Update message (PUT /users/:userID/conversations/:conversationID/messages/:messageID) with invalid body', async (t) => {
-  const res = await authClient.put(`users/${bobId}/conversations/${bobConversationId}/messages/${createdMessageId}`, {
-    json: {
-      // Missing Name
-    }
-  });
-  t.is(res.statusCode, 400);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Update message (PUT /users/:userID/conversations/:conversationID/messages/:messageID) with invalid credentials', async (t) => {
-  const res = await client.put(`users/${bobId}/conversations/${bobConversationId}/messages/${createdMessageId}`, {
-    json: {
-      MessageText: 'More message text'
-    }
-  });
-  t.is(res.statusCode, 401);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Update message (PUT /users/:userID/conversations/:conversationID/messages/:messageID) with invalid authorization', async (t) => {
-  const res = await authClient.put(`users/${bobId}/conversations/${bobConversationId}/messages/${aliceMessageId}`, {
-    json: {
-      MessageText: 'More message text'
-    }
-  });
-  t.is(res.statusCode, 403);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Delete message (DELETE /users/:userID/conversations/:conversationID/messages/:messageID) with invalid credentials', async (t) => {
-  const res = await client.delete(`users/${bobId}/conversations/${bobConversationId}/messages/${createdMessageId}`);
-  t.is(res.statusCode, 401);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Delete message (DELETE /users/:userID/conversations/:conversationID/messages/:messageID) with invalid authorization', async (t) => {
-  const res = await authClient.delete(`users/${bobId}/conversations/${bobConversationId}/messages/${aliceMessageId}`);
-  t.is(res.statusCode, 403);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Delete message (DELETE /users/:userID/conversations/:conversationID/messages/:messageID)', async (t) => {
-  const res = await authClient.delete(`users/${bobId}/conversations/${bobConversationId}/messages/${createdMessageId}`);
-  t.is(res.statusCode, 204);
-  t.falsy(res.body);
-  t.truthy(res.statusMessage);
-});
+// -----------------
+// Create failures |
+// -----------------
 
 test.serial('Create message (POST /users/:userID/conversations/:conversationID/messages) with invalid body', async (t) => {
   const res = await authClient.post(`users/${bobId}/conversations/${bobConversationId}/messages`, {
@@ -236,20 +202,49 @@ test.serial('Create message (POST /users/:userID/conversations/:conversationID/m
   t.truthy(res.body.message);
 });
 
+// -----------------
+// Update failures |
+// -----------------
+
+test.serial('Update message (PUT /users/:userID/conversations/:conversationID/messages/:messageID) with invalid body', async (t) => {
+  const res = await authClient.put(`users/${bobId}/conversations/${bobConversationId}/messages/${createdMessageId}`, {
+    json: {
+      // Missing Name
+    }
+  });
+  t.is(res.statusCode, 400);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Update message (PUT /users/:userID/conversations/:conversationID/messages/:messageID) with invalid credentials', async (t) => {
+  const res = await client.put(`users/${bobId}/conversations/${bobConversationId}/messages/${createdMessageId}`, {
+    json: {
+      MessageText: 'More message text'
+    }
+  });
+  t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Update message (PUT /users/:userID/conversations/:conversationID/messages/:messageID) with invalid authorization', async (t) => {
+  const res = await authClient.put(`users/${bobId}/conversations/${bobConversationId}/messages/${aliceMessageId}`, {
+    json: {
+      MessageText: 'More message text'
+    }
+  });
+  t.is(res.statusCode, 403);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
 test.serial('Update non-existent message (PUT /users/:userID/conversations/:conversationID/messages/:messageID)', async (t) => {
   const res = await authClient.put(`users/${bobId}/conversations/${bobConversationId}/messages/676767`, {
     json: {
       MessageText: 'Non-existent message'
     }
   });
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
-
-test.serial('Delete non-existent message (DELETE /users/:userID/conversations/:conversationID/messages/:messageID)', async (t) => {
-  const res = await authClient.delete(`users/${bobId}/conversations/${bobConversationId}/messages/676767`);
   t.is(res.statusCode, 404);
   t.is(res.body.success, false);
   t.truthy(res.body.message);
@@ -268,20 +263,46 @@ test.serial('Update message (PUT /users/:userID/conversations/:conversationID/me
   t.is(res.body.error, 'NOT_FOUND');
 });
 
-test.serial('Delete message (DELETE /users/:userID/conversations/:conversationID/messages/:messageID) of non-existent conversation', async (t) => {
-  const res = await adminClient.delete(`users/${aliceId}/conversations/676767/messages/${aliceOwnConvoMessageId}`);
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
-
 test.serial('Update message (PUT /users/:userID/conversations/:conversationID/messages/:messageID) of non-existent user', async (t) => {
   const res = await adminClient.put(`users/676767/conversations/${aliceConversationId}/messages/${aliceOwnConvoMessageId}`, {
     json: {
       MessageText: 'Non-existent message'
     }
   });
+  t.is(res.statusCode, 404);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
+});
+
+// -----------------
+// Delete failures |
+// -----------------
+
+test.serial('Delete message (DELETE /users/:userID/conversations/:conversationID/messages/:messageID) with invalid credentials', async (t) => {
+  const res = await client.delete(`users/${bobId}/conversations/${bobConversationId}/messages/${createdMessageId}`);
+  t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Delete message (DELETE /users/:userID/conversations/:conversationID/messages/:messageID) with invalid authorization', async (t) => {
+  const res = await authClient.delete(`users/${bobId}/conversations/${bobConversationId}/messages/${aliceMessageId}`);
+  t.is(res.statusCode, 403);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Delete non-existent message (DELETE /users/:userID/conversations/:conversationID/messages/:messageID)', async (t) => {
+  const res = await authClient.delete(`users/${bobId}/conversations/${bobConversationId}/messages/676767`);
+  t.is(res.statusCode, 404);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
+});
+
+test.serial('Delete message (DELETE /users/:userID/conversations/:conversationID/messages/:messageID) of non-existent conversation', async (t) => {
+  const res = await adminClient.delete(`users/${aliceId}/conversations/676767/messages/${aliceOwnConvoMessageId}`);
   t.is(res.statusCode, 404);
   t.is(res.body.success, false);
   t.truthy(res.body.message);
@@ -295,6 +316,21 @@ test.serial('Delete message (DELETE /users/:userID/conversations/:conversationID
   t.truthy(res.body.message);
   t.is(res.body.error, 'NOT_FOUND');
 });
+
+// ---------------------
+// Successful deletion |
+// ---------------------
+
+test.serial('Delete message (DELETE /users/:userID/conversations/:conversationID/messages/:messageID)', async (t) => {
+  const res = await authClient.delete(`users/${bobId}/conversations/${bobConversationId}/messages/${createdMessageId}`);
+  t.is(res.statusCode, 204);
+  t.falsy(res.body);
+  t.truthy(res.statusMessage);
+});
+
+// ----------------------------------------------------
+// Success cases using member instead of owner status |
+// ----------------------------------------------------
 
 test.serial('Create message (POST /users/:userID/conversations/:conversationID/messages) with membership instead of ownership', async (t) => {
   const res = await authClient.post(`users/${bobId}/conversations/${aliceConversationId}/messages`, {
@@ -343,7 +379,9 @@ test.serial('Delete message (DELETE /users/:userID/conversations/:conversationID
   t.truthy(res.statusMessage);
 });
 
-// Admin overrides
+// -----------------
+// Admin overrides |
+// -----------------
 
 test.serial('Create message (POST /users/:userID/conversations/:conversationID/messages) via admin override', async (t) => {
   const res = await adminClient.post(`users/${charlieId}/conversations/${charlieConversationId}/messages`, {
