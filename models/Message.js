@@ -7,11 +7,11 @@ import mongoose from 'mongoose';
 
 const messageSchema = new mongoose.Schema(
   {
-    MessageID: { type: Number, index: true, unique: true, required: true },
-    MessageText: { type: String, required: true },
-    Timestamp: { type: Number, required: true },
-    ConversationID: { type: Number, required: true },
-    UserID: { type: Number, required: true }
+    MessageID: { type: Number, index: true, unique: true, required: true }, // Unique identifier for the message
+    MessageText: { type: String, required: true },  // Message content
+    Timestamp: { type: Number, required: true },  // Time the message was sent
+    ConversationID: { type: Number, required: true }, // ID of the conversation this message belongs to
+    UserID: { type: Number, required: true } // ID of the user who sent the message
   },
   { timestamps: true, collection: 'messages' }
 );

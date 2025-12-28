@@ -8,27 +8,22 @@ import { authOptional } from './middleware/auth.js';
 
 const app = express();
 
-// Security & parsers
-app.use(helmet());
-app.use(cors());
+app.use(helmet()); // Security headers
+app.use(cors()); // Cross-Origin Resource Sharing (CORS)
+
+// Body parsing
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: false }));
 
-// Logging
-app.use(httpLogger);
-
-// Optional auth attaches req.user when present
-app.use(authOptional());
-
-// Routes
-app.use('/', routes);
+app.use(httpLogger); // Logging
+app.use(authOptional()); // Optional auth attaches req.user when present
+app.use('/', routes); // Routes
 
 // Health check
 app.get('/health', (_req, res) => res.json({ success: true, data: { status: 'ok' }, error: null, message: 'Healthy' }));
 
-// 404 and Error handlers
-app.use(notFoundHandler);
-app.use(errorHandler);
+app.use(notFoundHandler); // 404 handler
+app.use(errorHandler); // Error handler
 
 export default app;
 

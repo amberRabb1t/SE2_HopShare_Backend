@@ -7,12 +7,12 @@ import mongoose from 'mongoose';
 
 const reviewSchema = new mongoose.Schema(
   {
-    ReviewID: { type: Number, index: true, unique: true, required: true },
-    Rating: { type: Number, required: true },
+    ReviewID: { type: Number, index: true, unique: true, required: true },  // Unique identifier for the review
+    Rating: { type: Number, required: true }, // Has to be between 1 and 5
     UserType: { type: Boolean, required: true }, // driver=true | passenger=false
-    Description: { type: String },
-    ReviewedUser: { type: Number, required: true },
-    Timestamp: { type: Number, required: true },
+    Description: { type: String },  // optional textual feedback
+    ReviewedUser: { type: Number, required: true }, // the user being reviewed
+    Timestamp: { type: Number, required: true },  // time of review creation
     UserID: { type: Number, required: true } // author
   },
   { timestamps: true, collection: 'reviews' }

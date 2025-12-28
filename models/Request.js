@@ -7,14 +7,14 @@ import mongoose from 'mongoose';
 
 const requestSchema = new mongoose.Schema(
   {
-    RequestID: { type: Number, index: true, unique: true, required: true },
-    Description: { type: String },
-    Status: { type: Boolean, default: false, required: true },
-    Start: { type: String, required: true },
-    End: { type: String, required: true },
-    DateAndTime: { type: Number, required: true },
-    Timestamp: { type: Number, required: true },
-    UserID: { type: Number, required: true }
+    RequestID: { type: Number, index: true, unique: true, required: true }, // Unique identifier for the Request
+    Description: { type: String },  // Optional description
+    Status: { type: Boolean, default: false, required: true }, // open=false, fulfilled=true
+    Start: { type: String, required: true },  // Starting location
+    End: { type: String, required: true }, // Ending location
+    DateAndTime: { type: Number, required: true }, // When the route is needed
+    Timestamp: { type: Number, required: true }, // When the request was created
+    UserID: { type: Number, required: true } // ID of the user who created the request
   },
   { timestamps: true, collection: 'requests' }
 );

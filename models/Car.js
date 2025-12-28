@@ -7,13 +7,13 @@ import mongoose from 'mongoose';
 
 const carSchema = new mongoose.Schema(
   {
-    CarID: { type: Number, index: true, unique: true, required: true },
-    Seats: { type: Number, required: true },
-    ServiceDate: { type: Number, required: true },
-    MakeModel: { type: String, required: true },
-    LicensePlate: { type: String, required: true },
-    Timestamp: { type: Number, required: true },
-    UserID: { type: Number, required: true }
+    CarID: { type: Number, index: true, unique: true, required: true }, // Unique identifier for the Car
+    Seats: { type: Number, required: true },  // Number of seats the Car has
+    ServiceDate: { type: Number, required: true }, // Most recent date the Car was serviced
+    MakeModel: { type: String, required: true }, // Make and model of the Car
+    LicensePlate: { type: String, required: true }, // License plate number of the Car
+    Timestamp: { type: Number, required: true }, // Timestamp when the Car record was created
+    UserID: { type: Number, required: true } // ID of the user who owns the Car
   },
   { timestamps: true, collection: 'cars' }
 );
