@@ -13,6 +13,7 @@ router.post('/', validate({ body: userBodySchema }), controller.createUser);
 
 router.get('/:userID', controller.getUser);
 
+// Only the owner of the user account can update it
 router.put(
   '/:userID',
   authRequired(),
@@ -21,6 +22,7 @@ router.put(
   controller.updateUser
 );
 
+// Only the owner of the user account can delete it
 router.delete(
   '/:userID',
   authRequired(),

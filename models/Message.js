@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+/*
+  Messages are individual text snippets sent by users within a Conversation.
+  This schema contains all the necessary information to store a Message.
+*/
+
 const messageSchema = new mongoose.Schema(
   {
     MessageID: { type: Number, index: true, unique: true, required: true },

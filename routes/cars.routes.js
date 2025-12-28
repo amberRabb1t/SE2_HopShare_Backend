@@ -12,6 +12,7 @@ const router = Router({ mergeParams: true });
 router.get('/', controller.listCars);
 router.get('/:carID', controller.getCar);
 
+// Only the user specified in the API endpoint (by userID) can add a car to their account 
 router.post(
   '/',
   authRequired(),
@@ -20,6 +21,7 @@ router.post(
   controller.createCar
 );
 
+// Only the owner of the car can update it
 router.put(
   '/:carID',
   authRequired(),
@@ -28,6 +30,7 @@ router.put(
   controller.updateCar
 );
 
+// Only the owner of the car can delete it
 router.delete(
   '/:carID',
   authRequired(),

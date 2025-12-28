@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+/* 
+  Reviews are evaluations given by users to other users based on their interactions (driver-passenger or vice versa).
+  This schema contains all the necessary information to store a Review.
+*/
+
 const reviewSchema = new mongoose.Schema(
   {
     ReviewID: { type: Number, index: true, unique: true, required: true },

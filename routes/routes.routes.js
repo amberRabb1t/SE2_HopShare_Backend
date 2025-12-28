@@ -11,13 +11,14 @@ const router = Router();
 router.get('/', validate({ query: routeQuerySchema }), controller.listRoutes);
 
 router.post('/', 
-  authRequired(), 
+  authRequired(), // Anonymous guests cannot create routes
   validate({ body: routeBodySchema }), 
   controller.createRoute
 );
 
 router.get('/:routeID', controller.getRoute);
 
+// Only the owner of the route can modify it
 router.put(
   '/:routeID',
   authRequired(),
@@ -26,6 +27,7 @@ router.put(
   controller.updateRoute
 );
 
+// Only the owner of the route can delete it
 router.delete(
   '/:routeID',
   authRequired(),

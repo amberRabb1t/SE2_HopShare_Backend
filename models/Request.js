@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+/*
+  Requests are public, user-generated posts indicating demand for a certain Route.
+  This schema contains all the necessary information to store a Request.
+*/
+
 const requestSchema = new mongoose.Schema(
   {
     RequestID: { type: Number, index: true, unique: true, required: true },

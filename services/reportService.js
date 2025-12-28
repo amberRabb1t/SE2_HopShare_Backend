@@ -2,11 +2,17 @@ import { dbState } from '../config/database.js';
 import { Report } from '../models/Report.js';
 import { getNextId } from '../utils/helpers.js';
 
+// Mock data used for testing without a database
 const reports = [
   { ReportID: 1, Description: 'Spam behavior', ReportedUser: 3, State: false, Timestamp: 1731400100, UserID: 2 },
   { ReportID: 2, Description: 'Rude messages', ReportedUser: 2, State: true, Timestamp: 1731400200, UserID: 4 }
 ];
 
+/**
+ * List reports with filters
+ * @param {object} filters 
+ * @returns {array}
+ */
 export async function list(filters = {}) {
   const { useMockData } = dbState();
   if (useMockData) {
@@ -25,6 +31,11 @@ export async function list(filters = {}) {
   return Report.find(q);
 }
 
+/**
+ * Create report
+ * @param {object} payload 
+ * @returns {object}
+ */
 export async function create(payload) {
   const { useMockData } = dbState();
   const toCreate = { ...payload, State: false, Timestamp: payload.Timestamp || Math.floor(Date.now() / 1000) };
@@ -40,6 +51,11 @@ export async function create(payload) {
   return Report.create(toCreate);
 }
 
+/**
+ * Get report
+ * @param {number} id 
+ * @returns {object|null}
+ */
 export async function get(id) {
   const { useMockData } = dbState();
   if (useMockData) {

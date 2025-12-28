@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+/*
+  Users are the primary entities of the application, representing individuals who can request and offer rides.
+  This schema contains all the necessary information to store a User.
+*/
+
 const userSchema = new mongoose.Schema(
   {
     UserID: { type: Number, index: true, unique: true, required: true },

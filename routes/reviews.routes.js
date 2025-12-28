@@ -16,6 +16,7 @@ const reviewsQuerySchema = Joi.object({
 
 router.get('/', validate({ query: reviewsQuerySchema }), controller.listUserReviews);
 
+// Only the user specified in the API endpoint (by userID) can add a review to their account
 router.post('/', 
   authRequired(),
   authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))),
@@ -25,6 +26,7 @@ router.post('/',
 
 router.get('/:reviewID', controller.getReview);
 
+// Only the owner of the review can update it
 router.put(
   '/:reviewID',
   authRequired(),
@@ -33,6 +35,7 @@ router.put(
   controller.updateReview
 );
 
+// Only the owner of the review can delete it
 router.delete(
   '/:reviewID',
   authRequired(),

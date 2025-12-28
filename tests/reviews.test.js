@@ -3,19 +3,21 @@ import { startTestServer } from './helpers/server.js';
 import { makeClient } from './helpers/http.js';
 
 let serverCtx;
-let client;
-let authClient;
-let adminClient;
+let client; // anonymous guest
+let authClient; // authenticated user
+let adminClient;  // admin account
 
+// Credentials needed to make the clients; these users are seeded in the mock data
 const bobAuth = { email: 'bob@example.com', password: 'password123' };
 const aliceAuth = { email: 'alice@example.com', password: 'password123' };
 
-// seeded in mock service
+// seeded in mock data
 const bobId = 2;
 const bobReviewId = 2;
 const aliceId = 1 
 const aliceReviewId = 1;
 
+// Setup
 test.before(async () => {
   serverCtx = await startTestServer();
   client = makeClient(serverCtx.url);
@@ -23,9 +25,17 @@ test.before(async () => {
   adminClient = makeClient(serverCtx.url, aliceAuth);
 });
 
+// Teardown
 test.after.always(async () => {
   await serverCtx.close();
 });
+
+/*
+  Tests for endpoints under /users/:userID/reviews
+  Includes tests for all CRUD operations and covers both success and failure cases, e.g.
+  invalid input parameters (path and body), non-existent resources, lack of authentication or authorization,
+  admin overrides, etc.
+*/
 
 let createdReviewId;
 

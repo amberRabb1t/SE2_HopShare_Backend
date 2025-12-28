@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+/*
+  Routes are public, user-generated posts indicating an available ride from a start location to an end location.
+  This schema contains all the necessary information to store a Route.
+*/
+
 const routeSchema = new mongoose.Schema(
   {
     RouteID: { type: Number, index: true, unique: true, required: true },

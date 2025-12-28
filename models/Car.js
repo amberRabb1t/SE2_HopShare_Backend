@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+/*
+  Each Route corresponds to a Car that will be used to fulfill it.
+  This schema contains all the necessary information to store a user's Car.
+*/
+
 const carSchema = new mongoose.Schema(
   {
     CarID: { type: Number, index: true, unique: true, required: true },

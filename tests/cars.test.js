@@ -3,20 +3,22 @@ import { startTestServer } from './helpers/server.js';
 import { makeClient } from './helpers/http.js';
 
 let serverCtx;
-let client;
-let authClient;
-let charlieClient;
-let adminClient;
+let client; // anonymous guest
+let authClient; // authenticated user
+let charlieClient;  // another authenticated user (useful for not-owner/not-member testing)
+let adminClient;  // admin account
 
+// Credentials needed to make the clients; these users are seeded in the mock data
 const bobAuth = { email: 'bob@example.com', password: 'password123' };
 const charlieAuth = { email: 'charlie@example.com', password: 'password123' };
 const aliceAuth = { email: 'alice@example.com', password: 'password123' };
 
-// seeded in mock service
+// seeded in mock data
 const aliceId = 1;
 const aliceCarId = 1;
 const bobId = 2;
 
+// Setup
 test.before(async () => {
   serverCtx = await startTestServer();
   client = makeClient(serverCtx.url);
@@ -25,9 +27,17 @@ test.before(async () => {
   adminClient = makeClient(serverCtx.url, aliceAuth);
 });
 
+// Teardown
 test.after.always(async () => {
   await serverCtx.close();
 });
+
+/*
+  Tests for endpoints under /users/:userID/cars
+  Includes tests for all CRUD operations and covers both success and failure cases, e.g.
+  invalid input parameters (path and body), non-existent resources, lack of authentication or authorization,
+  admin overrides, etc.
+*/
 
 let createdCarId;
 

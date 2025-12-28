@@ -11,6 +11,7 @@ const router = Router({ mergeParams: true });
 
 // Conversations
 
+// Only the user specified in the API endpoint (by userID) can see their conversations
 router.get(
   '/',
   authRequired(),
@@ -18,6 +19,7 @@ router.get(
   controller.listConversations
 );
 
+// Only members of the conversation can get its details
 router.get(
   '/:conversationID',
   authRequired(),
@@ -25,6 +27,7 @@ router.get(
   controller.getConversation
 );
 
+// Only the user specified in the API endpoint (by userID) can add a conversation to their account
 router.post(
   '/',
   authRequired(),
@@ -33,6 +36,7 @@ router.post(
   controller.createConversation
 );
 
+// Only the owner of the conversation can update it
 router.put(
   '/:conversationID',
   authRequired(),
@@ -41,6 +45,7 @@ router.put(
   controller.updateConversation
 );
 
+// Only the owner of the conversation can delete it
 router.delete(
   '/:conversationID',
   authRequired(),
@@ -50,6 +55,7 @@ router.delete(
 
 // Messages
 
+// Only members of the conversation can see its messages
 router.get(
   '/:conversationID/messages',
   authRequired(),
@@ -57,6 +63,7 @@ router.get(
   controller.listMessages
 );
 
+// Only members of the conversation can get a specific message within it
 router.get(
   '/:conversationID/messages/:messageID',
   authRequired(),
@@ -64,6 +71,7 @@ router.get(
   controller.getMessage
 );
 
+// Only members of the conversation can send a message in it
 router.post(
   '/:conversationID/messages',
   authRequired(),
@@ -72,6 +80,7 @@ router.post(
   controller.createMessage
 );
 
+// Only the sender of the message can edit it
 router.put(
   '/:conversationID/messages/:messageID',
   authRequired(),
@@ -80,6 +89,7 @@ router.put(
   controller.updateMessage
 );
 
+// Only the sender of the message can delete it
 router.delete(
   '/:conversationID/messages/:messageID',
   authRequired(),

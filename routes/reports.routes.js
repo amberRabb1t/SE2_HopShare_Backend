@@ -9,20 +9,20 @@ const router = Router();
 
 router.get('/',
     authRequired(),
-    authorizeAdmin(),
+    authorizeAdmin(), // Only admin users can see all reports
     validate({ query: reportQuerySchema }),
     controller.listReports
 );
 
 router.post('/', 
-    authRequired(), 
+    authRequired(), // Anonymous guests cannot report users
     validate({ body: reportBodySchema }), 
     controller.createReport
 );
 
 router.get('/:reportID',
     authRequired(),
-    authorizeAdmin(),
+    authorizeAdmin(), // Same for specific reports; admins only
     controller.getReport
 );
 

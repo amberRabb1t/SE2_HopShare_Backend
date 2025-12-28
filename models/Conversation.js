@@ -1,5 +1,10 @@
 import mongoose from 'mongoose';
 
+/*
+  Conversations are group-chat like structures that allow users to communicate.
+  This schema contains all the necessary information to store a Conversation.
+*/
+
 const conversationSchema = new mongoose.Schema(
   {
     ConversationID: { type: Number, index: true, unique: true, required: true },
