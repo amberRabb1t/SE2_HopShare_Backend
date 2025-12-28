@@ -174,8 +174,3 @@ export async function removeMessage(userID, conversationID, messageID) {
   return res.deletedCount > 0;
 }
 
-// Expose mocks for cross-service references (read-only)
-export function __mock() {
-  return { conversations, messages };
-}
-

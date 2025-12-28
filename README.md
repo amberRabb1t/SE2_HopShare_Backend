@@ -124,8 +124,6 @@ On error:
   - PUT /users/:userID/reviews/:reviewID
   - DELETE /users/:userID/reviews/:reviewID
 
-This satisfies the requirement of at least 10 available routes and includes GET/POST/PUT/DELETE on the same resources.
-
 ## Data Model
 
 Mongoose models are provided for:

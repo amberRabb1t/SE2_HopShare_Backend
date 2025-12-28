@@ -133,8 +133,3 @@ export async function remove(id) {
   return res.deletedCount > 0;
 }
 
-// Expose mock for cross-services linking (read-only)
-export function __mock() {
-  return users;
-}
-

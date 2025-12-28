@@ -1,0 +1,368 @@
+{
+  "project": {
+    "name": "project",
+    "exportDate": "2025-11-12T12:33:00.182Z"
+  },
+  "requirements": [
+    {
+      "id": "R-1",
+      "text": "The user must be able to write reviews of other users.",
+      "description": "The user must be able to rate and review other users, both for their role as drivers and passengers.\n\nUser Priority: A user looking for a route should know whether its driver is well-rated; similarly, a user creating a route might not want to allow a badly-rated passenger to embark.\n\nTechnical Priority: Without it, reviews cannot be created and thus review scores cannot be calculated.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-2",
+      "text": "The user must be able to ask to join a route.",
+      "description": "The user must be able to ask to join a route, notifying the route’s creator.\n\nUser Priority: Facilitates users joining routes as passengers, while giving control over who joins to the route’s creator.\n\nTechnical Priority: Requesting, creating, and joining routes is the purpose of the app.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-3",
+      "text": "The user must be able to accept other users asking to join his route(s).",
+      "description": "The user, having created a route, must be able to accept other users that have asked to join it as passengers.\n\nUser Priority: It is important for the creator of a route to have control over who joins it.\n\nTechnical Priority: Requesting, creating, and joining routes is the purpose of the app.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-4",
+      "text": "The user must be able to publish requests.",
+      "description": "The user must be able to publish a request for the creation of a route that does not currently exist, to meet his traveling needs.\n\nUser Priority: If the route that a user needs to travel does not exist, it is important for him/her to be able to request its creation, for other users to see; it is also important for the user to be able to see what routes are in demand, before creating one.\n\nTechnical Priority: Requesting, creating, and joining routes is the purpose of the app.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-5",
+      "text": "The user must be able to register cars in his account.",
+      "description": "The user must be able to register cars in his account, thereby determining the vehicles that he can use to create and drive routes.\n\nUser Priority: It is important for the user to be able to see what car will be used to drive the route he is interested in.\n\nTechnical Priority: Routes are tied to the car assigned to them, and thus cannot be created without the user being able to register them.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-6",
+      "text": "The user must be able to report other users.",
+      "description": "The user must be able to report other users, eg. when they break the app’s rules.\n\nUser Priority: It is important for the user to be able to punish the violation of the platform’s rules by reporting it to the administrators who can then take action, thus improving the user experience by reducing interaction with bad actors.\n\nTechnical Priority: The system functions more smoothly with less bad actors.",
+      "type": "Functional",
+      "userPriority": "Medium",
+      "systemPriority": "Medium"
+    },
+    {
+      "id": "R-7",
+      "text": "The user must be able to create routes.",
+      "description": "The user must be able to create a route - either standalone or as a response to one or more requests - for other users to see, so they can ask to join as passengers.\n\nUser Priority: Creating routes is basic user functionality for a carpooling app.\n\nTechnical Priority: Requesting, creating, and joining routes is the purpose of the app.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-8",
+      "text": "The user must be able to edit his routes.",
+      "description": "The user must be able to edit the details of the routes he has created.\n\nUser Priority: It is important for the user to be able to change what he states in his routes, so that mistakes can be corrected and the routes can be kept up-to-date with changes in needs or circumstances (eg. fixing typos, changing destination, changing the car to be used, etc).\n\nTechnical Priority: It is important in order for the routes in the system to be up-to-date and correct at any given moment.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-9",
+      "text": "The user must be able to edit his reviews.",
+      "description": "The user must be able to edit reviews he has written.\n\nUser Priority:  It is important for the user to be able to change what he has written in his/her reviews, so that mistakes can be corrected (eg. fixing typos) or extra information can be added, that was accidentally omitted when the review was first written.\n\nTechnical Priority: It is important in order for the reviews (and thus, review scores) in the system to be up-to-date and correct at any given moment.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-10",
+      "text": "The user must be able to edit his requests.",
+      "description": "The user must be able to edit requests he has published.\n\nUser Priority: It is important for the user to be able to change what he states in his requests, so that mistakes can be corrected and the requests can be kept up-to-date with changes in needs or circumstances (eg. fixing typos, changing destination, changing date, etc).\n\nTechnical Priority: It is important in order for the requests in the system to be up-to-date and correct at any given moment.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-11",
+      "text": "The user must be able to edit his cars.",
+      "description": "The user must be able to edit the information of the registered cars in his account.\n\nUser Priority: It is important for the user to be able to change the details of his cars, so that mistakes can be corrected (eg. typos) and information can be kept up-to-date (eg. last service date).\n\nTechnical Priority: It is important in order for the cars in the system to be up-to-date and correct at any given moment.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-12",
+      "text": "The user must be able to delete his routes.",
+      "description": "The user must be able to delete routes he has created.\n\nUser Priority: It is important for the user to be able to remove a route that he/she created accidentally or does not want to drive at the moment.\n\nTechnical Priority: It is important in order for the system not to show “available” routes that will not actually be driven.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-13",
+      "text": "The user must be able to delete his reviews.",
+      "description": "The user must be able to delete reviews he has written.\n\nUser Priority: It is important for the user to be able to remove a review that he for whatever reason decided should not be up, or one that was posted accidentally - provided that the user is the writer of said review.\n\nTechnical Priority: It is important in order for the system not to show reviews that are inaccurate or were posted accidentally and are misleadingly affecting the review scores of users.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-14",
+      "text": "The user must be able to delete his requests.",
+      "description": "The user must be able to delete requests he has published.\n\nUser Priority: It is important for the user to be able to remove requests that he/she no longer needs or ones that were published accidentally.\n\nTechnical Priority: It is important in order for the system not to show requests that do not correspond to a real need/demand.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-15",
+      "text": "The user must be able to delete his cars.",
+      "description": "The user must be able to delete registered cars in his account.\n\nUser Priority: It is important for the user to be able to remove cars from his/her account that for whatever reason will no longer be used for routes (eg. the car is no longer in the user’s possession) or ones that were registered accidentally.\n\nTechnical Priority: It is important in order for the system not to store cars that do not correspond to real, usable vehicles.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-16",
+      "text": "The user must be able to create conversations.",
+      "description": "The user must be able to create conversations, which will function as group chats and/or direct messages.\n\nUser Priority: It is important for the user to be able to communicate quickly with other users, if he/she needs to.\n\nTechnical Priority: It is important for the system to provide a way of instant information exchange between users, since it can be critical in the context of traveling - which is the purpose of the app.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-17",
+      "text": "The user must be able to invite other users to join his conversations.",
+      "description": "The user must be able to invite other users to become members of conversations he has created.\n\nUser Priority: It is important for the user to be able to communicate quickly with other users, if he/she needs to, while controlling who can join.\n\nTechnical Priority: It is important for the system to provide a way of instant information exchange between users, since it can be critical in the context of traveling - which is the purpose of the app",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-18",
+      "text": "The user must be able to send messages in his conversations.",
+      "description": "The user must be able to send messages in conversations he is a member of.\n\nUser Priority: It is important for the user to be able to communicate quickly with other users, if he needs to.\n\nTechnical Priority: It is important for the system to provide a way of instant information exchange between users, since it can be critical in the context of traveling - which is the purpose of the app.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-19",
+      "text": "The user must be able to edit his messages.",
+      "description": "The user must be able to edit messages he has sent in conversations he is a member of.\n\nUser Priority: It is somewhat important for the user to be able to correct mistakes (eg. typos) or add information that was accidentally omitted in messages he sent; however the same thing can be accomplished simply by sending extra messages, so this functionality is not critical.\n\nTechnical Priority: It is not very important, as instant and accurate information exchange can be achieved without it.",
+      "type": "Functional",
+      "userPriority": "Medium",
+      "systemPriority": "Medium"
+    },
+    {
+      "id": "R-20",
+      "text": "The system must notify the user whenever a route is created in response to one of his requests.",
+      "description": "The system must notify the user, via push notification, whenever another user creates a route in response to one of his requests.\n\nUser Priority: It is important for the user to know whether his/her requests have been responded to without needing to constantly check it manually.\n\nTechnical Priority: It is important in order to lower the likelihood that a route created as a response to one or more requests ends up with 0 passengers - however the system can work without it.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "Medium"
+    },
+    {
+      "id": "R-21",
+      "text": "The system must notify the user whenever someone asks to join one of his routes.",
+      "description": "The system must notify the user, via push notification, whenever another user asks to join one of his routes.\n\nUser Priority: It is important for the user to know whether his routes have received join requests without needing to constantly check it manually.\n\nTechnical Priority: It is important in order to lower the likelihood that a user who asked to join a route has his request ignored by the route creator - however the system can work without it.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "Medium"
+    },
+    {
+      "id": "R-22",
+      "text": "The system must notify the user whenever his status as a route member changes.",
+      "description": "The system must notify the user, via push notification, whenever he is accepted or rejected from a route he has asked to join; he must also be notified if he is removed from a route he was previously accepted into.\n\nUser Priority: It is important for the user to know if he has been accepted into the route(s) he has asked to join; this way he knows whether to keep searching without needing to constantly check it manually.\n\nTechnical Priority: It is important in order to lower the likelihood that a user ends up as a member of 2 mutually exclusive routes because he/she did not know that he/she got accepted into one, before asking to join the other.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-23",
+      "text": "The user must be able to view user profiles.",
+      "description": "The user must be able to view the basic profile information of other users, as well as his own.\n\nUser Priority: It is important for the user to be able to read basic profile info (e.g. username, rating, reviews) of other users, in order to be able to communicate with them, review them and/or get an idea of who they are before traveling with them. Obviously, he must be able to inspect his own profile as well.\n\nTechnical Priority: It is important in order to facilitate several functions, like writing reviews or reporting.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-24",
+      "text": "The user must be able to search other users.",
+      "description": "The user must have access to a search feature that allows him to search for other users by username.\n\nUser Priority: It is important for the user to be able to have a convenient way to invite users to a conversation or write a review about them.\n\nTechnical Priority: It is somewhat important in order for the features that depend on interaction with other users not to remain unused due to being hard-to-use.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "Medium"
+    },
+    {
+      "id": "R-25",
+      "text": "The user must be able to search a list of all available routes.",
+      "description": "The user must be able to search, through filters, a list of all available routes.\n\nUser Priority: It is important for the user to be able to find routes to join.\n\nTechnical Priority: Requesting, creating, and joining routes is the purpose of the app; routes cannot be joined if they cannot be found.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-26",
+      "text": "The user must be able to search a list of all available requests.",
+      "description": "The user must be able to search, through filters, a list of all available requests.\n\nUser Priority: It is important for the user to know which routes are in demand, in order to create one which fills said demand.\n\nTechnical Priority: Requesting, creating, and joining routes is the purpose of the app; requests cannot be met if they cannot be found.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-27",
+      "text": "The user must be able to see a list of his routes.",
+      "description": "The user must be able to see a scroll-able list of all the routes he has created or joined.\n\nUser Priority: It is important for the user to have an overview of his routes.\n\nTechnical Priority: It is important in order to facilitate easy management of routes and thus prevent routes that need changes or removal from remaining as they are.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "Medium"
+    },
+    {
+      "id": "R-28",
+      "text": "The user must be able to see a list of his requests.",
+      "description": "The user must be able to see a scroll-able list of all the requests he has created.\n\nUser Priority: It is important for the user to have an overview of his requests.\n\nTechnical Priority: It is important in order to facilitate easy management of requests and thus prevent requests that need changes or removal from remaining as they are.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-29",
+      "text": "The user must be able to remove users from his conversations.",
+      "description": "The user must be able to remove users from conversations he has created.\n\nUser Priority: It is important for the user to have control over who is a member of the conversations he has created.\n\nTechnical Priority: The system can function without it, however its inclusion prevents scenarios like the needless deletion and re-creation of a conversation in the system only to remove a user.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "Medium"
+    },
+    {
+      "id": "R-30",
+      "text": "The user must be able to see a list of all the reviews he has written.",
+      "description": "The user must be able to see a scroll-able list of all the reviews he has written.\n\nDescription: The user must be able to search, through filters, a list of all the reviews he has written.\n\nUser Priority: It is important for the user to have an overview of all the reviews he has written.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-31",
+      "text": "The user must be able to rename his conversations.",
+      "description": "The user must be able to rename conversations he has created.\n\nUser Priority: It is somewhat important for the user to be able to rename conversations in order to help make them more recognizable or reflect changes in their content.\n\nTechnical Priority: The system can largely function fine without this functionality.",
+      "type": "Functional",
+      "userPriority": "Medium",
+      "systemPriority": "Medium"
+    },
+    {
+      "id": "R-32",
+      "text": "The user must be able to search a list of his conversations.",
+      "description": "The user must be able to search, through filters, a list of all the conversations he has created or joined.\n\nUser Priority: It is important for the user to have an overview of all the conversations he is a member of.\n\nTechnical Priority: It is important in order for conversations to be readily accessible.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-33",
+      "text": "The user must be able to leave his conversations.",
+      "description": "The user must be able to leave conversations he is a member of.\n\nUser Priority: It is important for the user to be able to leave conversations he no longer wishes to be a part of.\n\nTechnical Priority: The system can function without it, however its inclusion prevents conversations from having bloated member lists filled with inactive members that want to leave.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "Medium"
+    },
+    {
+      "id": "R-34",
+      "text": "The system must be able to run on mobile devices.",
+      "description": "The system must work on mobile devices (smartphones, tablets, etc) running Android (version 12 or newer) or iOS (version 18 or newer).\n\nUser Priority: It is important for the user to be able to use the application on his/her mobile device.\n\nTechnical Priority: A system that has to do with travel should be able to be used on the most popular mobile devices.",
+      "type": "NonFunctional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-35",
+      "text": "The system must have high availability.",
+      "description": "The system must be available at least 99,5% of the time, allowing downtime only for planned maintenance outside of peak user hours.\n\nUser Priority: It is important for the user experience to make sure the app does not have frequent server interruptions.\n\nTechnical Priority: It is important for the system to have planned interruptions for maintenance and updates/upgrades.",
+      "type": "NonFunctional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-36",
+      "text": "The system must be able to support 10.000 concurrent users.",
+      "description": "The system must be able to support at least 10.000 concurrent users without significant performance degradation.\n\nUser Priority: It is important for the user experience not to be degraded when a lot of users are using the app at once.\n\nTechnical Priority: It is important in order for the system to function correctly and responsively, as use of the app by a large number of users at the same time is expected.",
+      "type": "NonFunctional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-37",
+      "text": "Stored user data must be encrypted.",
+      "description": "User data (e.g. personal data, route history) must be stored using AES-256 encryption, ensuring it is protected against unauthorized access.\n\nUser Priority: It is important for the user to know that his/her data is protected and their privacy is taken seriously.\n\nTechnical Priority: It is important in order for the system to comply with data protection regulations and prevent data theft attacks that could compromise the system from being successful.",
+      "type": "NonFunctional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-38",
+      "text": "The application must be lightweight in terms of system resource usage.",
+      "description": "The app must use system resources (storage, CPU, memory, battery, mobile data) efficiently in order to keep battery consumption low and provide quick response times to user inputs; it must open in less than 2 seconds, scrolling must be smooth, the UI buttons should have a response time of less than 0,1 seconds and the server API between 1 and 3 seconds.\n\nUser Priority: Users want a responsive app that doesn’t lag, doesn’t consume too much battery or mobile data and doesn’t hog storage or memory.\n\nTechnical Priority: A system that uses system resources efficiently runs more smoothly and is less time-consuming to update, maintain and test.",
+      "type": "NonFunctional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-39",
+      "text": "The system must notify the user whenever his status as a conversation member changes.",
+      "description": "The system must notify the user, via push notification, whenever he is added to or removed from a conversation he has been invited to or is a member of.\n\nUser Priority: It is important for the user to know if he has been accepted into the route(s) he has asked to join; this way he knows whether to keep searching without needing to constantly check it manually.\n\nTechnical Priority: It is important in order to lower the likelihood that a user ends up as a member of 2 mutually exclusive routes because he/she did not know that he/she got accepted into one, before asking to join the other.",
+      "type": "Functional",
+      "userPriority": "Medium",
+      "systemPriority": "Low"
+    },
+    {
+      "id": "R-40",
+      "text": "The system must notify the user whenever he receives a message.",
+      "description": "The system must notify the user, via push notification, whenever he receives a message in a conversation he is a member of.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "Medium"
+    },
+    {
+      "id": "R-41",
+      "text": "The system must notify the user whenever he receives a review.",
+      "description": "The system must notify the user, via push notification, whenever another user writes a review about him.",
+      "type": "Functional",
+      "userPriority": "Medium",
+      "systemPriority": "Low"
+    },
+    {
+      "id": "R-42",
+      "text": "The user must be able to reject other users asking to join his route(s).",
+      "description": "The user, having created a route, must be able to reject other users that have asked to join it as passengers.\n\nUser Priority: It is important for the creator of a route to have control over who joins it.\n\nTechnical Priority: Requesting, creating, and joining routes is the purpose of the app.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-43",
+      "text": "The user must be able to remove other users from his route(s).",
+      "description": "The user, having created a route, must be able to remove other users from it that have joined it as passengers.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-44",
+      "text": "The user must be able to delete his conversations.",
+      "description": "The user must be able to delete conversations he has created.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "High"
+    },
+    {
+      "id": "R-45",
+      "text": "The user must be able to delete his messages.",
+      "description": "The user must be able to delete messages he has sent in conversations he is a member of.",
+      "type": "Functional",
+      "userPriority": "High",
+      "systemPriority": "Low"
+    }
+  ]
+}

@@ -76,8 +76,3 @@ export async function remove(userID, reviewID) {
   return res.deletedCount > 0;
 }
 
-// expose mock (read-only)
-export function __mock() {
-  return reviews;
-}
-

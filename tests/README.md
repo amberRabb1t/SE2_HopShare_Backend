@@ -4,7 +4,7 @@
 - Coverage: c8 (V8 native)
 - HTTP client: got
 - Server: node:http (ephemeral port per test run)
-- Authentication: Basic Auth using mock user `alice@example.com / password123`
+- Authentication: Basic Auth using mock users
 
 How to run:
 ```bash
