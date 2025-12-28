@@ -241,3 +241,8 @@ export async function removeMessage(userID, conversationID, messageID) {
   return res.deletedCount > 0;
 }
 
+// expose mock (read-only)
+export function __mock() {
+  return { conversations, messages };
+}
+

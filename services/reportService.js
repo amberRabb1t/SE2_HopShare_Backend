@@ -64,3 +64,8 @@ export async function get(id) {
   return Report.findOne({ ReportID: id });
 }
 
+// expose mock (read-only)
+export function __mock() {
+  return reports;
+}
+

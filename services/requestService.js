@@ -105,3 +105,8 @@ export async function remove(id) {
   return res.deletedCount > 0;
 }
 
+// expose mock (read-only)
+export function __mock() {
+  return requests;
+}
+
