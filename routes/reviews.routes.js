@@ -2,8 +2,7 @@ import { Router } from 'express';
 import { validate } from '../middleware/validation.js';
 import { authRequired } from '../middleware/auth.js';
 import { authorizeOwner } from '../middleware/authorize.js';
-import Joi from 'joi';
-import { reviewBodySchema } from '../utils/validators.js';
+import { reviewBodySchema, reviewQuerySchema } from '../utils/validators.js';
 import * as controller from '../controllers/reviewController.js';
 import { get as reviewServiceGet } from '../services/reviewService.js';
 import { get as userServiceGet } from '../services/userService.js';
@@ -22,13 +21,8 @@ const router = Router({ mergeParams: true });
   - DELETE /users/1/reviews/2
 */
 
-// Determines whether to list reviews the user has written or reviews about the user (or both if no filter is provided)
-const reviewsQuerySchema = Joi.object({
-  myReviews: Joi.boolean()
-});
-
 // List reviews for a user, with optional filtering
-router.get('/', validate({ query: reviewsQuerySchema }), controller.listUserReviews); // no authentication required
+router.get('/', validate({ query: reviewQuerySchema }), controller.listUserReviews); // no authentication required
 
 // Add a review to a user's account
 router.post('/', 

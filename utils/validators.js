@@ -108,6 +108,11 @@ export const reviewBodySchema = Joi.object({
   Timestamp: Joi.number().integer()
 }).required();
 
+// Determines whether to list Reviews the user has written or Reviews about the user (or both if no filter is provided)
+export const reviewQuerySchema = Joi.object({
+  myReviews: Joi.boolean()
+});
+
 // In accordance with User Model
 export const userBodySchema = Joi.object({
   UserID: Joi.number().integer(),
