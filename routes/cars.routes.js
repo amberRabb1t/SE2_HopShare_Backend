@@ -4,7 +4,6 @@ import { authRequired } from '../middleware/auth.js';
 import { authorizeOwner } from '../middleware/authorize.js';
 import { carBodySchema } from '../utils/validators.js';
 import * as controller from '../controllers/carController.js';
-import { get as carServiceGet } from '../services/carService.js';
 import { get as userServiceGet } from '../services/userService.js';
 
 const router = Router({ mergeParams: true });
@@ -42,7 +41,7 @@ router.put(
   '/:carID',
   authRequired(),
   // Only the owner of the car can update it
-  authorizeOwner(async (req) => carServiceGet(Number(req.params.userID), Number(req.params.carID))),
+  authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))),
   validate({ body: carBodySchema }),
   controller.updateCar
 );
@@ -52,9 +51,19 @@ router.delete(
   '/:carID',
   authRequired(),
   // Only the owner of the car can delete it
-  authorizeOwner(async (req) => carServiceGet(Number(req.params.userID), Number(req.params.carID))),
+  authorizeOwner(async (req) => userServiceGet(Number(req.params.userID))),
   controller.deleteCar
 );
+
+/*
+  Note: checking if the actor-user is the user specified in the API endpoint
+  is sufficient for authorization, because Cars are always accessed via a combination of
+  their "CarID" and "UserID" fields. Therefore, attempting to access a Car that does not
+  belong to "param-user" will fail at a later level (e.g., trying to get CarID=2
+  for UserID=1 when CarID=2 actually has UserID=3 will return null/false).
+
+  Therefore as long as "actor-user = param-user" we can safely authorize the action.
+*/
 
 export default router;
 
