@@ -10,6 +10,18 @@ import { get as userServiceGet } from '../services/userService.js';
 
 const router = Router({ mergeParams: true });
 
+/* 
+  All the API endpoints required to perform CRUD operations on Reviews.
+  The routes are nested under /users/:userID/reviews
+
+  Example routes:
+  - GET /users/1/reviews
+  - POST /users/1/reviews
+  - GET /users/1/reviews/2
+  - PUT /users/1/reviews/2
+  - DELETE /users/1/reviews/2
+*/
+
 // Determines whether to list reviews the user has written or reviews about the user (or both if no filter is provided)
 const reviewsQuerySchema = Joi.object({
   myReviews: Joi.boolean()

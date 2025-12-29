@@ -2,6 +2,17 @@ import Joi from 'joi';
 
 // OpenAPI component schemas translated into Joi
 
+/*
+  Note:
+  - Not all "required" fields in the models are marked as required in the Joi schemas. This is because
+    some fields are auto-generated (like IDs and Timestamps) and should not be required in the request body;
+    others are set in the beginning and not expected to be provided or changed by the user (e.g., Ratings,
+    Banned, IsAdmin, State, Status).
+  - An optional field merely lacks the ".required()" constraint in the Joi schema.
+  - The "Rules" field of Routes, that is not required in the model, is given default values
+    to ensure consistent data handling.
+*/
+
 // In accordance with Route Model
 export const routeBodySchema = Joi.object({
   RouteID: Joi.number().integer(),

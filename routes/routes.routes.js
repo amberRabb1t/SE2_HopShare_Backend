@@ -8,6 +8,18 @@ import { get as routesServiceGet } from '../services/routeService.js';
 
 const router = Router();
 
+/*
+  All the API endpoints required to perform CRUD operations on Routes.
+  The routes are nested under /routes
+
+  Example routes:
+  - GET /routes
+  - POST /routes
+  - GET /routes/2
+  - PUT /routes/2
+  - DELETE /routes/2
+*/
+
 // List all routes with optional query parameters for filtering
 router.get('/', validate({ query: routeQuerySchema }), controller.listRoutes); // no authentication required
 

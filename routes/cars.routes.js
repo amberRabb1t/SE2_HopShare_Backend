@@ -9,6 +9,18 @@ import { get as userServiceGet } from '../services/userService.js';
 
 const router = Router({ mergeParams: true });
 
+/*
+  All the API endpoints required to perform CRUD operations on Cars.
+  The routes are nested under /users/:userID/cars
+
+  Example routes:
+  - GET /users/1/cars
+  - GET /users/1/cars/2
+  - POST /users/1/cars
+  - PUT /users/1/cars/2
+  - DELETE /users/1/cars/2
+*/
+
 // List user's cars
 router.get('/', controller.listCars); // no authentication required
 

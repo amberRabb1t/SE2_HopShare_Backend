@@ -9,6 +9,25 @@ import { get as userServiceGet } from '../services/userService.js';
 
 const router = Router({ mergeParams: true });
 
+/*
+  All the API endpoints required to perform CRUD operations on Conversations and Messages.
+  The routes are nested under /users/:userID/conversations
+
+  Example routes:
+  - Conversations
+    - GET /users/1/conversations
+    - GET /users/1/conversations/2
+    - POST /users/1/conversations
+    - PUT /users/1/conversations/2
+    - DELETE /users/1/conversations/2
+  -Messages
+    - GET /users/1/conversations/2/messages
+    - GET /users/1/conversations/2/messages/3
+    - POST /users/1/conversations/2/messages
+    - PUT /users/1/conversations/2/messages/3
+    - DELETE /users/1/conversations/2/messages/3
+*/
+
 // Conversations
 
 // List user's conversations

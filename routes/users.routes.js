@@ -8,6 +8,18 @@ import { get as userServiceGet } from '../services/userService.js';
 
 const router = Router();
 
+/*
+  All the API endpoints required to perform CRUD operations on Users.
+  The routes are nested under /users
+
+  Example routes:
+  - GET /users
+  - POST /users
+  - GET /users/2
+  - PUT /users/2
+  - DELETE /users/2
+*/
+
 // List users with optional query parameters
 router.get('/', validate({ query: usersQuerySchema }), controller.listUsers); // authentication not required
 
