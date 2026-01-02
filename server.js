@@ -1,8 +1,12 @@
+import app from './app.js';
+import { connectDatabase } from './config/database.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import app from './app.js';
-import { connectDatabase } from './config/database.js';
+/*
+  Main entry point for the HopShare API Backend (npm start)
+  Sets the port, connects to the database (MongoDB or mock) and listens
+*/
 
 const PORT = Number(process.env.PORT || 3000);
 
@@ -17,3 +21,4 @@ start().catch((err) => {
   console.error('Failed to start server', err);
   process.exit(1);
 });
+

@@ -3,13 +3,15 @@ import { startTestServer } from './helpers/server.js';
 import { makeClient } from './helpers/http.js';
 
 let serverCtx;
-let client;
+let client; // anonymous guest
 
+// Setup
 test.before(async () => {
   serverCtx = await startTestServer();
   client = makeClient(serverCtx.url);
 });
 
+// Teardown
 test.after.always(async () => {
   await serverCtx.close();
 });

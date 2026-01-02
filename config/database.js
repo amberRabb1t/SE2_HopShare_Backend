@@ -37,3 +37,4 @@ export async function connectDatabase() {
 export function dbState() {
   return { isConnected, useMockData };
 }
+

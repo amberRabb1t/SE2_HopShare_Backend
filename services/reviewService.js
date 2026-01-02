@@ -2,15 +2,18 @@ import { dbState } from '../config/database.js';
 import { Review } from '../models/Review.js';
 import { getNextId } from '../utils/helpers.js';
 
+// Mock data used for testing without a database
 const reviews = [
   { ReviewID: 1, Rating: 5, UserType: true, Description: 'Great driver', ReviewedUser: 2, Timestamp: 1731401000, UserID: 1 },
   { ReviewID: 2, Rating: 4, UserType: false, Description: 'Polite passenger', ReviewedUser: 1, Timestamp: 1731401100, UserID: 2 }
 ];
 
 /**
- * List reviews for a user; if myReviews=true returns reviews written by the user, else reviews about the user; undefined returns both.
+ * List reviews for a user; if myReviews=true returns reviews written by the user,
+ * otherwise it returns reviews about the user; undefined returns both.
  * @param {number} userID
  * @param {boolean|undefined} myReviews
+ * @returns {array}
  */
 export async function list(userID, myReviews) {
   const { useMockData } = dbState();
@@ -24,6 +27,12 @@ export async function list(userID, myReviews) {
   return Review.find({ $or: [{ UserID: Number(userID) }, { ReviewedUser: Number(userID) }] });
 }
 
+/**
+ * Create review in user's account
+ * @param {number} userID 
+ * @param {object} payload 
+ * @returns {object}
+ */
 export async function create(userID, payload) {
   const { useMockData } = dbState();
   const toCreate = { ...payload, UserID: Number(userID), Timestamp: payload.Timestamp || Math.floor(Date.now() / 1000) };
@@ -39,6 +48,12 @@ export async function create(userID, payload) {
   return Review.create(toCreate);
 }
 
+/**
+ * Get user's review
+ * @param {number} userID 
+ * @param {number} reviewID 
+ * @returns {object|null}
+ */
 export async function get(userID, reviewID) {
   const { useMockData } = dbState();
   if (useMockData) {
@@ -47,9 +62,17 @@ export async function get(userID, reviewID) {
   return Review.findOne({ ReviewID: Number(reviewID) });
 }
 
+/**
+ * Update user's review
+ * @param {number} userID 
+ * @param {number} reviewID 
+ * @param {object} payload 
+ * @returns {object|null}
+ */
 export async function update(userID, reviewID, payload) {
   const { useMockData } = dbState();
 
+  // Prevent updating immutable fields
   const safe = { ...payload };
   delete safe.ReviewID;
   delete safe.UserID;
@@ -64,6 +87,12 @@ export async function update(userID, reviewID, payload) {
   return Review.findOneAndUpdate({ ReviewID: Number(reviewID), UserID: Number(userID) }, safe, { new: true });
 }
 
+/**
+ * Delete user's review
+ * @param {number} userID 
+ * @param {number} reviewID 
+ * @returns {boolean}
+ */
 export async function remove(userID, reviewID) {
   const { useMockData } = dbState();
   if (useMockData) {

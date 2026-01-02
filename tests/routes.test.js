@@ -3,17 +3,19 @@ import { startTestServer } from './helpers/server.js';
 import { makeClient } from './helpers/http.js';
 
 let serverCtx;
-let client;
-let authClient;
-let adminClient;
+let client; // anonymous guest
+let authClient; // authenticated user
+let adminClient;  // admin account
 
+// Credentials needed to make the clients; these users are seeded in the mock data
 const bobAuth = { email: 'bob@example.com', password: 'password123' };
 const aliceAuth = { email: 'alice@example.com', password: 'password123' };
 
-// seeded in mock service
+// seeded in mock data
 const aliceRouteId = 1;
 const bobRouteId = 2;
 
+// Setup
 test.before(async () => {
   serverCtx = await startTestServer();
   client = makeClient(serverCtx.url);
@@ -21,9 +23,21 @@ test.before(async () => {
   adminClient = makeClient(serverCtx.url, aliceAuth);
 });
 
+// Teardown
 test.after.always(async () => {
   await serverCtx.close();
 });
+
+/*
+  Tests for endpoints under /routes
+  Includes tests for all CRUD operations and covers both success and failure cases, e.g.
+  invalid input parameters (path and body), non-existent resources, lack of authentication or authorization,
+  admin overrides, etc.
+*/
+
+// ---------------
+// Success cases |
+// ---------------
 
 test.serial('List routes (GET /routes)', async (t) => {
   const res = await client.get('routes');
@@ -62,14 +76,6 @@ test.serial('Get route by ID (GET /routes/:routeID)', async (t) => {
   t.is(res.body.data.RouteID, createdRouteId);
 });
 
-test.serial('Get non-existent route (GET /routes/:routeID)', async (t) => {
-  const res = await client.get('routes/676767');
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-	t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
-
 test.serial('Update route (PUT /routes/:routeID)', async (t) => {
   const res = await authClient.put(`routes/${createdRouteId}`, {
     json: {
@@ -85,6 +91,77 @@ test.serial('Update route (PUT /routes/:routeID)', async (t) => {
   t.is(res.body.success, true);
 	t.truthy(res.body.message);
   t.is(res.body.data.OccupiedSeats, 2);
+});
+
+// -----------------------
+// Various failure cases |
+// -----------------------
+
+// --------------
+// Get failures |
+// --------------
+
+test.serial('Get non-existent route (GET /routes/:routeID)', async (t) => {
+  const res = await client.get('routes/676767');
+  t.is(res.statusCode, 404);
+  t.is(res.body.success, false);
+	t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
+});
+
+// -----------------
+// Create failures |
+// -----------------
+
+test.serial('Create route (POST /routes) with invalid body', async (t) => {
+  const res = await authClient.post('routes', {
+    json: {
+      // missing Start
+      End: 'City Z',
+      Stops: 'Stop',
+      DateAndTime: Math.floor(Date.now() / 1000) + 3600,
+      OccupiedSeats: 1
+    }
+  });
+  t.is(res.statusCode, 400);
+  t.is(res.body.success, false);
+	t.truthy(res.body.message);
+});
+
+test.serial('Create route (POST /routes) with invalid credentials', async (t) => {
+  const payload = {
+    Start: 'City X',
+    End: 'City Y',
+    Stops: 'Midpoint',
+    DateAndTime: Math.floor(Date.now() / 1000) + 86400,
+    OccupiedSeats: 1,
+    Comment: 'Test route'
+  };
+  const res = await client.post('routes', { json: payload });
+  t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+	t.truthy(res.body.message);
+});
+
+// -----------------
+// Update failures |
+// -----------------
+
+test.serial('Update non-existent route (PUT /routes/:routeID)', async (t) => {
+  const res = await authClient.put('routes/676767', {
+    json: {
+      Start: 'City X',
+      End: 'City Y',
+      Stops: 'Midpoint',
+      DateAndTime: Math.floor(Date.now() / 1000) + 172800,
+      OccupiedSeats: 2,
+      Comment: 'Updated'
+    }
+  });
+  t.is(res.statusCode, 404);
+  t.is(res.body.success, false);
+	t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
 });
 
 test.serial('Update route (PUT /routes/:routeID) with invalid body', async (t) => {
@@ -135,6 +212,10 @@ test.serial('Update route (PUT /routes/:routeID) with invalid authorization', as
 	t.truthy(res.body.message);
 });
 
+// -----------------
+// Delete failures |
+// -----------------
+
 test.serial('Delete route (DELETE /routes/:routeID) with invalid credentials', async (t) => {
   const res = await client.delete(`routes/${createdRouteId}`);
   t.is(res.statusCode, 401);
@@ -149,60 +230,6 @@ test.serial('Delete route (DELETE /routes/:routeID) with invalid authorization',
 	t.truthy(res.body.message);
 });
 
-test.serial('Delete route (DELETE /routes/:routeID)', async (t) => {
-  const res = await authClient.delete(`routes/${createdRouteId}`);
-  t.is(res.statusCode, 204);
-  t.falsy(res.body);
-	t.truthy(res.statusMessage);
-});
-
-test.serial('Create route (POST /routes) with invalid body', async (t) => {
-  const res = await authClient.post('routes', {
-    json: {
-      // missing Start
-      End: 'City Z',
-      Stops: 'Stop',
-      DateAndTime: Math.floor(Date.now() / 1000) + 3600,
-      OccupiedSeats: 1
-    }
-  });
-  t.is(res.statusCode, 400);
-  t.is(res.body.success, false);
-	t.truthy(res.body.message);
-});
-
-test.serial('Create route (POST /routes) with invalid credentials', async (t) => {
-  const payload = {
-    Start: 'City X',
-    End: 'City Y',
-    Stops: 'Midpoint',
-    DateAndTime: Math.floor(Date.now() / 1000) + 86400,
-    OccupiedSeats: 1,
-    Comment: 'Test route'
-  };
-  const res = await client.post('routes', { json: payload });
-  t.is(res.statusCode, 401);
-  t.is(res.body.success, false);
-	t.truthy(res.body.message);
-});
-
-test.serial('Update non-existent route (PUT /routes/:routeID)', async (t) => {
-  const res = await authClient.put('routes/676767', {
-    json: {
-      Start: 'City X',
-      End: 'City Y',
-      Stops: 'Midpoint',
-      DateAndTime: Math.floor(Date.now() / 1000) + 172800,
-      OccupiedSeats: 2,
-      Comment: 'Updated'
-    }
-  });
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-	t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
-
 test.serial('Delete non-existent route (DELETE /routes/:routeID)', async (t) => {
   const res = await authClient.delete('routes/676767');
   t.is(res.statusCode, 404);
@@ -211,7 +238,20 @@ test.serial('Delete non-existent route (DELETE /routes/:routeID)', async (t) => 
   t.is(res.body.error, 'NOT_FOUND');
 });
 
-// Admin overrides
+// ---------------------
+// Successful deletion |
+// ---------------------
+
+test.serial('Delete route (DELETE /routes/:routeID)', async (t) => {
+  const res = await authClient.delete(`routes/${createdRouteId}`);
+  t.is(res.statusCode, 204);
+  t.falsy(res.body);
+	t.truthy(res.statusMessage);
+});
+
+// -----------------
+// Admin overrides |
+// -----------------
 
 test.serial('Update route (PUT /routes/:routeID) via admin override', async (t) => {
   const res = await adminClient.put(`routes/${bobRouteId}`, {

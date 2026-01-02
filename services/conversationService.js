@@ -3,6 +3,7 @@ import { Conversation } from '../models/Conversation.js';
 import { Message } from '../models/Message.js';
 import { getNextId } from '../utils/helpers.js';
 
+// Mock data used for testing without a database
 const conversations = [
   { ConversationID: 1, ConversationName: 'Trip to City B', Timestamp: 1731400700, Members: [2, 4], UserID: 1 },
   { ConversationID: 2, ConversationName: 'Airport Group', Timestamp: 1731400800, Members: [1, 3], UserID: 2 },
@@ -18,6 +19,11 @@ const messages = [
 
 // Conversations
 
+/**
+ * List user's conversations
+ * @param {number} userID 
+ * @returns {array}
+ */
 export async function list(userID) {
   const { useMockData } = dbState();
   if (useMockData) {
@@ -26,6 +32,12 @@ export async function list(userID) {
   return Conversation.find({ UserID: Number(userID) });
 }
 
+/**
+ * Create conversation in user's account
+ * @param {number} userID 
+ * @param {object} payload 
+ * @returns {object}
+ */
 export async function create(userID, payload) {
   const { useMockData } = dbState();
   
@@ -42,6 +54,12 @@ export async function create(userID, payload) {
   return Conversation.create(toCreate);
 }
 
+/**
+ * Get user's conversation
+ * @param {number} userID 
+ * @param {number} conversationID 
+ * @returns {object|null}
+ */
 export async function get(userID, conversationID) {
   const { useMockData } = dbState();
 
@@ -51,6 +69,13 @@ export async function get(userID, conversationID) {
   return Conversation.findOne({ UserID: Number(userID), ConversationID: Number(conversationID) });
 }
 
+/**
+ * Update user's conversation
+ * @param {number} userID 
+ * @param {number} conversationID 
+ * @param {object} payload 
+ * @returns {object|null}
+ */
 export async function update(userID, conversationID, payload) {
   const { useMockData } = dbState();
 
@@ -74,6 +99,12 @@ export async function update(userID, conversationID, payload) {
   return Conversation.findOneAndUpdate({ UserID: Number(userID), ConversationID: Number(conversationID) }, safe, { new: true });
 }
 
+/**
+ * Delete user's conversation
+ * @param {number} userID 
+ * @param {number} conversationID 
+ * @returns {boolean}
+ */
 export async function remove(userID, conversationID) {
   const { useMockData } = dbState();
 
@@ -89,6 +120,12 @@ export async function remove(userID, conversationID) {
 
 // Messages
 
+/**
+ * List messages in conversation
+ * @param {number} userID 
+ * @param {number} conversationID 
+ * @returns {array|null}
+ */
 export async function listMessages(userID, conversationID) {
   const { useMockData } = dbState();
 
@@ -101,6 +138,13 @@ export async function listMessages(userID, conversationID) {
   return Message.find({ ConversationID: Number(conversationID) });
 }
 
+/**
+ * Create message in conversation
+ * @param {number} userID 
+ * @param {number} conversationID 
+ * @param {object} payload 
+ * @returns {object|null}
+ */
 export async function createMessage(userID, conversationID, payload) {
   const { useMockData } = dbState();
 
@@ -125,6 +169,13 @@ export async function createMessage(userID, conversationID, payload) {
   return Message.create(toCreate);
 }
 
+/**
+ * Get message in conversation
+ * @param {number} userID 
+ * @param {number} conversationID 
+ * @param {number} messageID 
+ * @returns {object|null}
+ */
 export async function getMessage(userID, conversationID, messageID) {
   const { useMockData } = dbState();
 
@@ -137,12 +188,21 @@ export async function getMessage(userID, conversationID, messageID) {
   return Message.findOne({ ConversationID: Number(conversationID), MessageID: Number(messageID) });
 }
 
+/**
+ * Update message in conversation
+ * @param {number} userID 
+ * @param {number} conversationID 
+ * @param {number} messageID 
+ * @param {object} payload 
+ * @returns {object|null}
+ */
 export async function updateMessage(userID, conversationID, messageID, payload) {
   const { useMockData } = dbState();
 
   const c = await get(userID, conversationID);
   if (!c) return null;
 
+  // Prevent updating immutable fields
   const safe = { ...payload };
   delete safe.MessageID;
   delete safe.ConversationID;
@@ -158,6 +218,13 @@ export async function updateMessage(userID, conversationID, messageID, payload) 
   return Message.findOneAndUpdate({ ConversationID: Number(conversationID), MessageID: Number(messageID) }, safe, { new: true });
 }
 
+/**
+ * Remove message in conversation
+ * @param {number} userID 
+ * @param {number} conversationID 
+ * @param {number} messageID 
+ * @returns {boolean|null}
+ */
 export async function removeMessage(userID, conversationID, messageID) {
   const { useMockData } = dbState();
 
@@ -174,7 +241,7 @@ export async function removeMessage(userID, conversationID, messageID) {
   return res.deletedCount > 0;
 }
 
-// Expose mocks for cross-service references (read-only)
+// expose mock (read-only)
 export function __mock() {
   return { conversations, messages };
 }

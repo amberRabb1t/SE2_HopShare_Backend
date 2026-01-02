@@ -2,11 +2,17 @@ import { dbState } from '../config/database.js';
 import { Request } from '../models/Request.js';
 import { getNextId } from '../utils/helpers.js';
 
+// Mock data used for testing without a database
 const requests = [
   { RequestID: 1, Description: 'Morning commute', Status: false, Start: 'City A', End: 'City D', DateAndTime: 1731600000, Timestamp: 1731400300, UserID: 2 },
   { RequestID: 2, Description: 'Airport drop', Status: false, Start: 'City C', End: 'Airport', DateAndTime: 1731650000, Timestamp: 1731400400, UserID: 3 }
 ];
 
+/** 
+ * List requests with filters
+ * @param {object} filters
+ * @returns {array}
+ */
 export async function list(filters = {}) {
   const { useMockData } = dbState();
   if (useMockData) {
@@ -25,6 +31,11 @@ export async function list(filters = {}) {
   return Request.find(q);
 }
 
+/**
+ * Create request
+ * @param {object} payload
+ * @returns {object}
+ */
 export async function create(payload) {
   const { useMockData } = dbState();
   const toCreate = { ...payload, Timestamp: payload.Timestamp || Math.floor(Date.now() / 1000) };
@@ -40,6 +51,11 @@ export async function create(payload) {
   return Request.create(toCreate);
 }
 
+/**
+ * Get request
+ * @param {number} id
+ * @returns {object|null}
+ */
 export async function get(id) {
   const { useMockData } = dbState();
   if (useMockData) {
@@ -48,9 +64,16 @@ export async function get(id) {
   return Request.findOne({ RequestID: id });
 }
 
+/**
+ * Update request
+ * @param {number} id
+ * @param {object} payload
+ * @returns {object|null}
+ */
 export async function update(id, payload) {
   const { useMockData } = dbState();
 
+  // Prevent updating immutable fields
   const safe = { ...payload };
   delete safe.RequestID;
   delete safe.UserID;
@@ -65,6 +88,11 @@ export async function update(id, payload) {
   return Request.findOneAndUpdate({ RequestID: id }, safe, { new: true });
 }
 
+/**
+ * Delete request
+ * @param {number} id 
+ * @returns {boolean}
+ */
 export async function remove(id) {
   const { useMockData } = dbState();
   if (useMockData) {
@@ -75,5 +103,10 @@ export async function remove(id) {
   }
   const res = await Request.deleteOne({ RequestID: id });
   return res.deletedCount > 0;
+}
+
+// expose mock (read-only)
+export function __mock() {
+  return requests;
 }
 

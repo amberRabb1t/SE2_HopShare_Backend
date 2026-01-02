@@ -33,3 +33,4 @@ export class AppError extends Error {
     this.meta = meta;
   }
 }
+

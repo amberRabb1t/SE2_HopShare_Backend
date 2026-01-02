@@ -8,20 +8,17 @@ import { AppError, ERROR_CODES } from '../config/constants.js';
 export function validate(schemas = {}) {
   return (req, _res, next) => {
     try {
+      // Validate query parameters
       if (schemas.query) {
-        const { value, error } = schemas.query.validate(req.query, { abortEarly: false, convert: true });
-        if (error) throw new AppError(error.message, 400, ERROR_CODES.VALIDATION_ERROR, error.details);
-        req.query = value;
+        req.query = validateSchema(schemas.query, req.query);
       }
+      // Validate URL parameters
       if (schemas.params) {
-        const { value, error } = schemas.params.validate(req.params, { abortEarly: false, convert: true });
-        if (error) throw new AppError(error.message, 400, ERROR_CODES.VALIDATION_ERROR, error.details);
-        req.params = value;
+        req.params = validateSchema(schemas.params, req.params);
       }
+      // Validate request body
       if (schemas.body) {
-        const { value, error } = schemas.body.validate(req.body, { abortEarly: false, convert: true });
-        if (error) throw new AppError(error.message, 400, ERROR_CODES.VALIDATION_ERROR, error.details);
-        req.body = value;
+        req.body = validateSchema(schemas.body, req.body);
       }
       next();
     } catch (err) {
@@ -29,3 +26,11 @@ export function validate(schemas = {}) {
     }
   };
 }
+
+// Generic helper function to validate data against a Joi schema
+function validateSchema(schema, data) {
+  const { value, error } = schema.validate(data, { abortEarly: false, convert: true });
+  if (error) throw new AppError(error.message, 400, ERROR_CODES.VALIDATION_ERROR, error.details);
+  return value;
+}
+

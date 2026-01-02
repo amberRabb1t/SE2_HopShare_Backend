@@ -3,7 +3,7 @@ import { dbState } from '../config/database.js';
 import { User } from '../models/User.js';
 import { getNextId } from '../utils/helpers.js';
 
-// Mock data
+// Mock data used for testing without a database
 const users = [
   // Default demo users (passwords in plaintext here; will be hashed once at startup)
   { UserID: 1, Name: 'Alice', PhoneNumber: 1234567890, PassengerRating: 4.5, DriverRating: 4.8, Banned: false, Email: 'alice@example.com', Password: 'password123', IsAdmin: true, Timestamp: Math.floor(Date.now() / 1000) },
@@ -26,6 +26,7 @@ async function ensureMockHashed() {
 /**
  * Find user by email (DB or mock)
  * @param {string} email
+ * @returns {object|null}
  */
 export async function findByEmail(email) {
   const { useMockData } = dbState();
@@ -39,6 +40,7 @@ export async function findByEmail(email) {
 /**
  * List users (by Name contains if provided)
  * @param {string} [name]
+ * @returns {array}
  */
 export async function list(name) {
   const { useMockData } = dbState();
@@ -54,10 +56,11 @@ export async function list(name) {
 /**
  * Create a new user
  * @param {object} payload
+ * @returns {object}
  */
 export async function create(payload) {
   const { useMockData } = dbState();
-  const toCreate = { ...payload, Timestamp: payload.Timestamp || Math.floor(Date.now() / 1000) };
+  const toCreate = { ...payload, Banned: false, IsAdmin: false, Timestamp: payload.Timestamp || Math.floor(Date.now() / 1000) };
   if (!toCreate.Password.startsWith('$2')) {
     toCreate.Password = await bcrypt.hash(toCreate.Password, 10);
   }
@@ -78,6 +81,7 @@ export async function create(payload) {
 /**
  * Get user by ID
  * @param {number} id
+ * @returns {object|null}
  */
 export async function get(id) {
   const { useMockData } = dbState();
@@ -91,12 +95,13 @@ export async function get(id) {
  * Update user
  * @param {number} id
  * @param {object} payload
+ * @returns {object|null}
  */
 export async function update(id, payload) {
   const { useMockData } = dbState();
 
   // A user should not be able to update his own ID, his admin status, his ban status, the timestamp of account creation or his own ratings
-  // Some of these things should be unchangable (e.g. Timestamp, ID) or only by an admin (Banned, IsAdmin, Ratings)
+  // Some of these things should be unchangable (e.g. Timestamp, ID, Ratings) or only by an admin (Banned, IsAdmin)
   const safe = { ...payload };
   delete safe.UserID;
   delete safe.Timestamp;
@@ -120,6 +125,7 @@ export async function update(id, payload) {
 /**
  * Delete user
  * @param {number} id
+ * @returns {boolean}
  */
 export async function remove(id) {
   const { useMockData } = dbState();
@@ -133,7 +139,7 @@ export async function remove(id) {
   return res.deletedCount > 0;
 }
 
-// Expose mock for cross-services linking (read-only)
+// expose mock (read-only)
 export function __mock() {
   return users;
 }

@@ -3,19 +3,21 @@ import { startTestServer } from './helpers/server.js';
 import { makeClient } from './helpers/http.js';
 
 let serverCtx;
-let client;
-let authClient;
-let adminClient;
+let client; // anonymous guest
+let authClient; // authenticated user
+let adminClient;  // admin account
 
+// Credentials needed to make the clients; these users are seeded in the mock data
 const bobAuth = { email: 'bob@example.com', password: 'password123' };
 const aliceAuth = { email: 'alice@example.com', password: 'password123' };
 
-// seeded in mock service
+// seeded in mock data
 const bobId = 2;
 const bobReviewId = 2;
 const aliceId = 1 
 const aliceReviewId = 1;
 
+// Setup
 test.before(async () => {
   serverCtx = await startTestServer();
   client = makeClient(serverCtx.url);
@@ -23,9 +25,21 @@ test.before(async () => {
   adminClient = makeClient(serverCtx.url, aliceAuth);
 });
 
+// Teardown
 test.after.always(async () => {
   await serverCtx.close();
 });
+
+/*
+  Tests for endpoints under /users/:userID/reviews
+  Includes tests for all CRUD operations and covers both success and failure cases, e.g.
+  invalid input parameters (path and body), non-existent resources, lack of authentication or authorization,
+  admin overrides, etc.
+*/
+
+// ---------------
+// Success cases |
+// ---------------
 
 let createdReviewId;
 
@@ -68,14 +82,6 @@ test.serial('Get review by ID (GET /users/:userID/reviews/:reviewID)', async (t)
   t.is(res.body.data.ReviewID, createdReviewId);
 });
 
-test.serial('Get non-existent review (GET /users/:userID/reviews/:reviewID)', async (t) => {
-  const res = await client.get(`users/${bobId}/reviews/676767`);
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
-
 test.serial('Update review (PUT /users/:userID/reviews/:reviewID)', async (t) => {
   const res = await authClient.put(`users/${bobId}/reviews/${createdReviewId}`, {
     json: {
@@ -90,68 +96,33 @@ test.serial('Update review (PUT /users/:userID/reviews/:reviewID)', async (t) =>
   t.truthy(res.body.message);
 });
 
-test.serial('Update review (PUT /users/:userID/reviews/:reviewID) with invalid body', async (t) => {
-  const res = await authClient.put(`users/${bobId}/reviews/${createdReviewId}`, {
-    json: {
-      // Missing Rating
-      UserType: true,
-      Description: 'Changed my mind again',
-      ReviewedUser: 4
-    }
-  });
-  t.is(res.statusCode, 400);
+// -----------------------
+// Various failure cases |
+// -----------------------
+
+// --------------
+// Get failures |
+// --------------
+
+test.serial('Get review (GET /users/:userID/reviews/:reviewID) of non-existent user', async (t) => {
+  const res = await adminClient.get(`users/676767/reviews/${aliceReviewId}`);
+  t.is(res.statusCode, 404);
   t.is(res.body.success, false);
   t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
 });
 
-test.serial('Update review (PUT /users/:userID/reviews/:reviewID) with invalid credentials', async (t) => {
-  const res = await client.put(`users/${bobId}/reviews/${createdReviewId}`, {
-    json: {
-      Rating: 3,
-      UserType: true,
-      Description: 'Changed my mind yet again',
-      ReviewedUser: 4
-    }
-  });
-  t.is(res.statusCode, 401);
+test.serial('Get non-existent review (GET /users/:userID/reviews/:reviewID)', async (t) => {
+  const res = await client.get(`users/${bobId}/reviews/676767`);
+  t.is(res.statusCode, 404);
   t.is(res.body.success, false);
   t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
 });
 
-test.serial('Update review (PUT /users/:userID/reviews/:reviewID) with invalid authorization', async (t) => {
-  const res = await authClient.put(`users/${aliceId}/reviews/${aliceReviewId}`, {
-    json: {
-      Rating: 3,
-      UserType: true,
-      Description: 'Changed my mind yet again',
-      ReviewedUser: 4
-    }
-  });
-  t.is(res.statusCode, 403);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Delete review (DELETE /users/:userID/reviews/:reviewID) with invalid credentials', async (t) => {
-  const res = await client.delete(`users/${bobId}/reviews/${createdReviewId}`);
-  t.is(res.statusCode, 401);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Delete review (DELETE /users/:userID/reviews/:reviewID) with invalid authorization', async (t) => {
-  const res = await authClient.delete(`users/${aliceId}/reviews/${aliceReviewId}`);
-  t.is(res.statusCode, 403);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Delete review (DELETE /users/:userID/reviews/:reviewID)', async (t) => {
-  const res = await authClient.delete(`users/${bobId}/reviews/${createdReviewId}`);
-  t.is(res.statusCode, 204);
-  t.falsy(res.body);
-  t.truthy(res.statusMessage);
-});
+// -----------------
+// Create failures |
+// -----------------
 
 test.serial('Create review (POST /users/:userID/reviews) with invalid body', async (t) => {
   const res = await authClient.post(`users/${bobId}/reviews`, {
@@ -209,36 +180,9 @@ test.serial('Create review (POST /users/:userID/reviews) connected to non-existe
   t.truthy(res.body.message);
 });
 
-test.serial('Update non-existent review (PUT /users/:userID/reviews/:reviewID)', async (t) => {
-  const res = await authClient.put(`users/${bobId}/reviews/676767`, {
-    json: {
-      Rating: 1,
-      UserType: true,
-      Description: 'Horrific',
-      ReviewedUser: 4
-    }
-  });
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
-
-test.serial('Delete non-existent review (DELETE /users/:userID/reviews/:reviewID)', async (t) => {
-  const res = await authClient.delete(`users/${bobId}/reviews/676767`);
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
-
-test.serial('Get review (GET /users/:userID/reviews/:reviewID) of non-existent user', async (t) => {
-  const res = await adminClient.get(`users/676767/reviews/${aliceReviewId}`);
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
+// -----------------
+// Update failures |
+// -----------------
 
 test.serial('Update review (PUT /users/:userID/reviews/:reviewID) of non-existent user', async (t) => {
   const res = await adminClient.put(`users/676767/reviews/${aliceReviewId}`, {
@@ -255,6 +199,89 @@ test.serial('Update review (PUT /users/:userID/reviews/:reviewID) of non-existen
   t.is(res.body.error, 'NOT_FOUND');
 });
 
+test.serial('Update non-existent review (PUT /users/:userID/reviews/:reviewID)', async (t) => {
+  const res = await authClient.put(`users/${bobId}/reviews/676767`, {
+    json: {
+      Rating: 1,
+      UserType: true,
+      Description: 'Horrific',
+      ReviewedUser: 4
+    }
+  });
+  t.is(res.statusCode, 404);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
+});
+
+test.serial('Update review (PUT /users/:userID/reviews/:reviewID) with invalid body', async (t) => {
+  const res = await authClient.put(`users/${bobId}/reviews/${createdReviewId}`, {
+    json: {
+      // Missing Rating
+      UserType: true,
+      Description: 'Changed my mind again',
+      ReviewedUser: 4
+    }
+  });
+  t.is(res.statusCode, 400);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Update review (PUT /users/:userID/reviews/:reviewID) with invalid credentials', async (t) => {
+  const res = await client.put(`users/${bobId}/reviews/${createdReviewId}`, {
+    json: {
+      Rating: 3,
+      UserType: true,
+      Description: 'Changed my mind yet again',
+      ReviewedUser: 4
+    }
+  });
+  t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Update review (PUT /users/:userID/reviews/:reviewID) with invalid authorization', async (t) => {
+  const res = await authClient.put(`users/${aliceId}/reviews/${aliceReviewId}`, {
+    json: {
+      Rating: 3,
+      UserType: true,
+      Description: 'Changed my mind yet again',
+      ReviewedUser: 4
+    }
+  });
+  t.is(res.statusCode, 403);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+// -----------------
+// Delete failures |
+// -----------------
+
+test.serial('Delete review (DELETE /users/:userID/reviews/:reviewID) with invalid credentials', async (t) => {
+  const res = await client.delete(`users/${bobId}/reviews/${createdReviewId}`);
+  t.is(res.statusCode, 401);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Delete review (DELETE /users/:userID/reviews/:reviewID) with invalid authorization', async (t) => {
+  const res = await authClient.delete(`users/${aliceId}/reviews/${aliceReviewId}`);
+  t.is(res.statusCode, 403);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Delete non-existent review (DELETE /users/:userID/reviews/:reviewID)', async (t) => {
+  const res = await authClient.delete(`users/${bobId}/reviews/676767`);
+  t.is(res.statusCode, 404);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
+});
+
 test.serial('Delete review (DELETE /users/:userID/reviews/:reviewID) of non-existent user', async (t) => {
   const res = await adminClient.delete(`users/676767/reviews/${aliceReviewId}`);
   t.is(res.statusCode, 404);
@@ -263,7 +290,20 @@ test.serial('Delete review (DELETE /users/:userID/reviews/:reviewID) of non-exis
   t.is(res.body.error, 'NOT_FOUND');
 });
 
-// Admin overrides
+// ---------------------
+// Successful deletion |
+// ---------------------
+
+test.serial('Delete review (DELETE /users/:userID/reviews/:reviewID)', async (t) => {
+  const res = await authClient.delete(`users/${bobId}/reviews/${createdReviewId}`);
+  t.is(res.statusCode, 204);
+  t.falsy(res.body);
+  t.truthy(res.statusMessage);
+});
+
+// -----------------
+// Admin overrides |
+// -----------------
 
 test.serial('Create review (POST /users/:userID/reviews) via admin override', async (t) => {
   const res = await adminClient.post(`users/${bobId}/reviews`, {

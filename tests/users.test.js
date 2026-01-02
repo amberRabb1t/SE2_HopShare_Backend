@@ -3,14 +3,16 @@ import { startTestServer } from './helpers/server.js';
 import { makeClient } from './helpers/http.js';
 
 let serverCtx;
-let client;
-let authClient;
-let adminClient;
+let client; // anonymous guest
+let authClient; // authenticated user
+let adminClient;  // admin account
 
+// Credentials needed to make the clients; these users are seeded in the mock data
 const bobAuth = { email: 'bob@example.com', password: 'password123' };
 const aliceAuth = { email: 'alice@example.com', password: 'password123' };
-const bobId = 2; // seeded in mock service
+const bobId = 2; // seeded in mock data
 
+// Setup
 test.before(async () => {
   serverCtx = await startTestServer();
   client = makeClient(serverCtx.url);
@@ -18,9 +20,21 @@ test.before(async () => {
   adminClient = makeClient(serverCtx.url, aliceAuth);
 });
 
+// Teardown
 test.after.always(async () => {
   await serverCtx.close();
 });
+
+/*
+  Tests for endpoints under /users (only up to /users/:userID)
+  Includes tests for all CRUD operations and covers both success and failure cases, e.g.
+  invalid input parameters (path and body), non-existent resources, lack of authentication or authorization,
+  admin overrides, etc.
+*/
+
+// ---------------
+// Success cases |
+// ---------------
 
 test.serial('List users (GET /users)', async (t) => {
   const res = await client.get('users');
@@ -36,14 +50,6 @@ test.serial('Get user by ID (GET /users/:userID)', async (t) => {
   t.is(res.body.success, true);
   t.truthy(res.body.message);
   t.is(res.body.data.UserID, bobId);
-});
-
-test.serial('Get non-existent user (GET /users/:userID)', async (t) => {
-  const res = await client.get('users/676767');
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
 });
 
 let createdUserId;
@@ -76,6 +82,73 @@ test.serial('Update user (PUT /users/:userID)', async (t) => {
   t.is(res.statusCode, 200);
   t.is(res.body.success, true);
   t.truthy(res.body.message);
+});
+
+// -----------------------
+// Various failure cases |
+// -----------------------
+
+// --------------
+// Get failures |
+// --------------
+
+test.serial('Get non-existent user (GET /users/:userID)', async (t) => {
+  const res = await client.get('users/676767');
+  t.is(res.statusCode, 404);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
+});
+
+// -----------------
+// Create failures |
+// -----------------
+
+test.serial('Create user (POST /users) with invalid body', async (t) => {
+  const res = await client.post('users', {
+    json: {
+      // Missing Name
+      PhoneNumber: 5550001111,
+      Email: 'diana@example.com',
+      Password: 'newpass123'
+    }
+  });
+  t.is(res.statusCode, 400);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+test.serial('Create user (POST /users) with password that is too short', async (t) => {
+  const res = await client.post('users', {
+    json: {
+      Name: 'BadPasswordEpidemicVictimNo2000',
+      PhoneNumber: 5550001111,
+      Email: 'ohnoes@example.com',
+      Password: 'those'
+    }
+  });
+  t.is(res.statusCode, 400);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+});
+
+// -----------------
+// Update failures |
+// -----------------
+
+test.serial('Update non-existent user (PUT /users/:userID)', async (t) => {
+  const res = await authClient.put('users/676767', {
+    json: {
+      Name: 'Bob',
+      PhoneNumber: 7676767676,
+      Email: 'bob@example.com',
+      Password: 'password123'
+    }
+  });
+  t.is(res.statusCode, 404);
+  t.is(res.body.success, false);
+  t.truthy(res.body.message);
+  t.is(res.body.error, 'NOT_FOUND');
 });
 
 test.serial('Update user (PUT /users/:userID) with invalid body', async (t) => {
@@ -134,6 +207,10 @@ test.serial('Update user (PUT /users/:userID) with invalid authorization', async
   t.truthy(res.body.message);
 });
 
+// -----------------
+// Delete failures |
+// -----------------
+
 test.serial('Delete user (DELETE /users/:userID) with invalid credentials', async (t) => {
   const res = await client.delete(`users/${createdUserId}`);
   t.is(res.statusCode, 401);
@@ -148,49 +225,6 @@ test.serial('Delete user (DELETE /users/:userID) with invalid authorization', as
   t.truthy(res.body.message);
 });
 
-test.serial('Create user (POST /users) with invalid body', async (t) => {
-  const res = await client.post('users', {
-    json: {
-      // Missing Name
-      PhoneNumber: 5550001111,
-      Email: 'diana@example.com',
-      Password: 'newpass123'
-    }
-  });
-  t.is(res.statusCode, 400);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Create user (POST /users) with password that is too short', async (t) => {
-  const res = await client.post('users', {
-    json: {
-      Name: 'BadPasswordEpidemicVictimNo2000',
-      PhoneNumber: 5550001111,
-      Email: 'ohnoes@example.com',
-      Password: 'those'
-    }
-  });
-  t.is(res.statusCode, 400);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-});
-
-test.serial('Update non-existent user (PUT /users/:userID)', async (t) => {
-  const res = await authClient.put('users/676767', {
-    json: {
-      Name: 'Bob',
-      PhoneNumber: 7676767676,
-      Email: 'bob@example.com',
-      Password: 'password123'
-    }
-  });
-  t.is(res.statusCode, 404);
-  t.is(res.body.success, false);
-  t.truthy(res.body.message);
-  t.is(res.body.error, 'NOT_FOUND');
-});
-
 test.serial('Delete non-existent user (DELETE /users/:userID)', async (t) => {
   const res = await authClient.delete('users/676767');
   t.is(res.statusCode, 404);
@@ -199,6 +233,10 @@ test.serial('Delete non-existent user (DELETE /users/:userID)', async (t) => {
   t.is(res.body.error, 'NOT_FOUND');
 });
 
+// ---------------------
+// Successful deletion |
+// ---------------------
+
 test.serial('Delete user (DELETE /users/:userID)', async (t) => {
   const res = await authClient.delete(`users/${bobId}`);
   t.is(res.statusCode, 204);
@@ -206,7 +244,9 @@ test.serial('Delete user (DELETE /users/:userID)', async (t) => {
   t.truthy(res.statusMessage);
 });
 
-// Admin overrides
+// -----------------
+// Admin overrides |
+// -----------------
 
 test.serial('Update user (PUT /users/:userID) via admin override', async (t) => {
   const res = await adminClient.put(`users/${createdUserId}`, {

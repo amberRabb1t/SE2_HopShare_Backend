@@ -2,7 +2,7 @@ import { dbState } from '../config/database.js';
 import { Route } from '../models/Route.js';
 import { getNextId } from '../utils/helpers.js';
 
-// Mock data
+// Mock data used for testing without a database
 const routes = [
   { RouteID: 1, Start: 'City A', End: 'City B', Stops: 'Stop1, Stop2', Comment: 'No smoking', DateAndTime: 1731400000, OccupiedSeats: 1, Rules: [true, false, false, false], Timestamp: 1731400000, UserID: 1 },
   { RouteID: 2, Start: 'City B', End: 'City C', Stops: 'Stop3', Comment: 'No pets', DateAndTime: 1731500000, OccupiedSeats: 2, Rules: [false, true, false, true], Timestamp: 1731500000, UserID: 2 }
@@ -10,6 +10,8 @@ const routes = [
 
 /**
  * List routes with filters
+ * @param {object} filters 
+ * @returns {array}
  */
 export async function list(filters = {}) {
   const { useMockData } = dbState();
@@ -32,6 +34,8 @@ export async function list(filters = {}) {
 
 /**
  * Create route
+ * @param {object} payload
+ * @returns {object}
  */
 export async function create(payload) {
   const { useMockData } = dbState();
@@ -53,6 +57,8 @@ export async function create(payload) {
 
 /**
  * Get route
+ * @param {number} id
+ * @returns {object|null}
  */
 export async function get(id) {
   const { useMockData } = dbState();
@@ -64,10 +70,14 @@ export async function get(id) {
 
 /**
  * Update route
+ * @param {number} id
+ * @param {object} payload
+ * @returns {object|null}
  */
 export async function update(id, payload) {
   const { useMockData } = dbState();
 
+  // Prevent updating immutable fields
   const safe = { ...payload };
   delete safe.RouteID;
   delete safe.UserID;
@@ -84,6 +94,8 @@ export async function update(id, payload) {
 
 /**
  * Remove route
+ * @param {number} id
+ * @returns {boolean}
  */
 export async function remove(id) {
   const { useMockData } = dbState();
@@ -95,5 +107,10 @@ export async function remove(id) {
   }
   const res = await Route.deleteOne({ RouteID: id });
   return res.deletedCount > 0;
+}
+
+// expose mock (read-only)
+export function __mock() {
+  return routes;
 }
 

@@ -7,22 +7,35 @@ import * as controller from '../controllers/reportController.js';
 
 const router = Router();
 
+/*
+  All the API endpoints required to perform CRUD operations on Reports.
+  The routes are nested under /reports
+
+  Example routes:
+  - GET /reports
+  - POST /reports
+  - GET /reports/2
+*/
+
+// List reports
 router.get('/',
     authRequired(),
-    authorizeAdmin(),
+    authorizeAdmin(), // Only admin users can see all reports
     validate({ query: reportQuerySchema }),
     controller.listReports
 );
 
+// Create report
 router.post('/', 
-    authRequired(), 
+    authRequired(), // Anonymous guests cannot report users
     validate({ body: reportBodySchema }), 
     controller.createReport
 );
 
+// Get report
 router.get('/:reportID',
     authRequired(),
-    authorizeAdmin(),
+    authorizeAdmin(), // Same for specific reports; admins only
     controller.getReport
 );
 

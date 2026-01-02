@@ -3,8 +3,8 @@
 Intuitive, easy-to-use application that facilitates carpooling in an organized manner.
 
 - Primary contract: OpenAPI Spec (see swagger.json)
-- Context: User Stories (stories.json)
-- Business Rules: Requirements (requirements.json)
+- Context: User Stories
+- Business Rules: Requirements
 
 This backend is production-ready with:
 - ES Modules, async/await throughout
@@ -124,8 +124,6 @@ On error:
   - PUT /users/:userID/reviews/:reviewID
   - DELETE /users/:userID/reviews/:reviewID
 
-This satisfies the requirement of at least 10 available routes and includes GET/POST/PUT/DELETE on the same resources.
-
 ## Data Model
 
 Mongoose models are provided for:
@@ -195,3 +193,4 @@ curl -u alice@example.com:password123 -X DELETE http://localhost:3000/routes/1
 ## License
 
 MIT
+
