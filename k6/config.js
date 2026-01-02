@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { sleep, check } from 'k6';
 
 // Maximum number of virtual users for the tests
-const maxVirtualUsers = 7500; // 7500 should be a little bit below the system's breaking point (found by stress test)
+const maxVirtualUsers = 7000; // 7000 should be a little bit below the system's breaking point (found by stress test)
 const testDurationInMins = 5; // GitHub runners have strict usage limits
 
 function getTestStageDurations(testDuration, holdStages, rampStages, holdToRampDurationRatio) {
