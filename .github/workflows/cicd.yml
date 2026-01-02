@@ -56,6 +56,7 @@ jobs:
           path: |
             ./k6/load/*.load.test.js
             ./k6/spike/*.spike.test.js
+          fail-fast: true # optional: fail the step early if any test fails (default: false)
 
   cd:
     runs-on: ubuntu-latest
