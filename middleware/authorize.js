@@ -11,7 +11,7 @@ import { AppError, ERROR_CODES } from '../config/constants.js';
  * @returns {import('express').RequestHandler}
  */
 export function authorizeOwner(loader) {
-  return async (req, _res, next) => {
+  return async (req, _, next) => {
     try {
       // Authentication should have attached req.user in authRequired()
       const actor = req.user;
@@ -56,7 +56,7 @@ export function authorizeOwner(loader) {
  * @returns {import('express').RequestHandler}
  */
 export function authorizeMember(loader) {
-  return async (req, _res, next) => {
+  return async (req, _, next) => {
     try {
       // Authentication should have attached req.user in authRequired()
       const actor = req.user;
@@ -101,7 +101,7 @@ export function authorizeMember(loader) {
  * * @returns {import('express').RequestHandler}
  */
 export function authorizeAdmin() {
-  return async (req, _res, next) => {
+  return async (req, _, next) => {
     try {
       // Authentication should have attached req.user in authRequired()
       const actor = req.user;

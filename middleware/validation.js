@@ -6,7 +6,7 @@ import { AppError, ERROR_CODES } from '../config/constants.js';
  * @returns {import('express').RequestHandler}
  */
 export function validate(schemas = {}) {
-  return (req, _res, next) => {
+  return (req, _, next) => {
     try {
       // Validate query parameters
       if (schemas.query) {

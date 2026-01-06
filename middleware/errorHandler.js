@@ -5,7 +5,7 @@ import { sendError } from '../utils/responses.js';
  * Not Found handler
  * @type {import('express').RequestHandler}
  */
-export function notFoundHandler(_req, res) {
+export function notFoundHandler(_, res) {
   return sendError(res, ERROR_CODES.NOT_FOUND, 404, { message: 'Resource not found' });
 }
 
