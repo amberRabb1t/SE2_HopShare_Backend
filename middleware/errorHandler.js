@@ -13,7 +13,7 @@ export function notFoundHandler(_req, res) {
  * Centralized error handler that differentiates error types.
  * @type {import('express').ErrorRequestHandler}
  */
-export function errorHandler(err, _req, res, _next) {
+export function errorHandler(err, __req, res, __next) {
   // Known AppError
   if (err instanceof AppError) {
     return sendError(res, err.code, err.statusCode, err);
