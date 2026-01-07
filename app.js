@@ -29,7 +29,7 @@ app.use(authOptional()); // Optional auth attaches req.user when present
 app.use('/', routes); // Endpoint routes
 
 // Health check
-app.get('/health', (_req, res) => res.json({ success: true, data: { status: 'ok' }, error: null, message: 'Healthy' }));
+app.get('/health', (_, res) => res.json({ success: true, data: { status: 'ok' }, error: null, message: 'Healthy' }));
 
 app.use(notFoundHandler); // 404 handler
 app.use(errorHandler); // Generic error handler

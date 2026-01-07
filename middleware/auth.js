@@ -43,7 +43,7 @@ async function authenticate(username, password) {
  */
 export function authRequired() {
   const enabled = String(process.env.BASIC_AUTH_ENABLED || 'true').toLowerCase() === 'true';
-  return async (req, _res, next) => {
+  return async (req, _, next) => {
     try {
       if (!enabled) return next();
 
@@ -66,7 +66,7 @@ export function authRequired() {
  * @returns {import('express').RequestHandler}
  */
 export function authOptional() {
-  return async (req, _res, next) => {
+  return async (req, _, next) => {
     try {
       const creds = parseBasicAuth(req);
       if (!creds) return next();

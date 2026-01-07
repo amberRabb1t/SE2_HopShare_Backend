@@ -5,7 +5,7 @@ import { sendError } from '../utils/responses.js';
  * Not Found handler
  * @type {import('express').RequestHandler}
  */
-export function notFoundHandler(_req, res) {
+export function notFoundHandler(_, res) {
   return sendError(res, ERROR_CODES.NOT_FOUND, 404, { message: 'Resource not found' });
 }
 
@@ -13,7 +13,7 @@ export function notFoundHandler(_req, res) {
  * Centralized error handler that differentiates error types.
  * @type {import('express').ErrorRequestHandler}
  */
-export function errorHandler(err, _req, res, _next) {
+export function errorHandler(err, _, res, __) {
   // Known AppError
   if (err instanceof AppError) {
     return sendError(res, err.code, err.statusCode, err);
